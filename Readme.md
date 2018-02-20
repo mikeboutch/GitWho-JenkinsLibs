@@ -38,3 +38,11 @@
 # Jenkins
 ### groovy
 `sh(returnStdout: true, script: 'git rev-list --no-merges --count HEAD ^origin/develop').trim()`
+
+# search the lasted branch name of release
+# Jenkins
+### groovy
+`sh(returnStdout: true, script: "git branch -r --list \"origin/feature/*\" --sort=-committerdate |head -1").trim().replaceFirst("origin/feature/","")`
+## Working directory:
+### bash:
+`git branch -r --list "feature/*" --sort=-committerdate |head -1 | xargs |sed s#feature/##`
