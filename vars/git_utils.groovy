@@ -1,1 +1,3 @@
-echo "I am in git_utils"
+def git_utils(){
+    echo "I am in git_utils"
+}
