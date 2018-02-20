@@ -7,3 +7,12 @@ def git_utils(){
 def currentBranchName(){
     return env.BRANCH_NAME
 }
+
+def currentCommitHash(){
+    return env.GIT_COMMIT
+}
+
+def currentCommitShortHash(){
+    return env.GIT_COMMIT[0..6]
+}
+
