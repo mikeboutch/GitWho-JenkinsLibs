@@ -21,7 +21,8 @@ def lastedTags() {
 }
 
 def currentTags() {
-    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").replaceFirst(/^undefined$/,"")
+    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").
+        replaceFirst(/^undefined$/,"")
 }
 
 def commitsCountSinceBranch(sinceBranchName) {
@@ -29,7 +30,8 @@ def commitsCountSinceBranch(sinceBranchName) {
 }
 
 def showSuffixOfBrachName(prefixBranchName){
-    sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranchName}/*\" --sort=-committerdate |head -1").trim().replaceFirst("origin/${prefixBranchName}/","")
+    sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranchName}/*\" --sort=-committerdate |head -1").trim().
+        replaceFirst("origin/${prefixBranchName}/","")
 }
 
 
