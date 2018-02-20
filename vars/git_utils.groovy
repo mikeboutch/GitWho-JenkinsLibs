@@ -24,5 +24,9 @@ def currentTags() {
     return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").replaceFirst(/^undefined$/,"")
 }
 
+def commitsCountSinceBranch(sinceBranchName) {
+    h(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranchName}").trim()
+}
+
 
 
