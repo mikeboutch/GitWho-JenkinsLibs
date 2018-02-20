@@ -16,3 +16,13 @@ def currentCommitShortHash(){
     return env.GIT_COMMIT[0..6]
 }
 
+def lastedTags() {
+    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git describe --abbrev=0 --tags 2>/dev/null || true').trim()
+}
+
+def currentTags() {
+    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").replaceFirst(/^undefined$/,"")
+}
+
+
+
