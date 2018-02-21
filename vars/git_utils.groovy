@@ -26,11 +26,12 @@ def currentTags() {
 }
 
 def commitsCountSinceBranch(sinceBranchName) {
-    sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranchName}").trim()
+    return sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranchName}").trim()
 }
 
 def showSuffixOfBrachName(prefixBranchName){
-    sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranchName}/*\" --sort=-committerdate |head -1").trim().
+    prefixBranchName=prefixBranchName.replaceFirst(/\/$/,"")
+    return sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranchName}/*\" --sort=-committerdate |head -1").trim().
         replaceFirst("origin/${prefixBranchName}/","")
 }
 
