@@ -3,7 +3,7 @@ def version(){
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
     //def suffixBranchName=""
-    if (currentBranchName)=="master") {
+    if (currentBranchName="master") {
         currentTags=gitUtils.currentTags()
         echo "we are in master $currentTags"
         if (currentTags?.trim()){
