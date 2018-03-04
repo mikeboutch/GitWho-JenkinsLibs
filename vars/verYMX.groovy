@@ -14,9 +14,9 @@ def version(){
         }
     } 
     if ( currentBranchName==~/^(?:release|hotfix)\// ){
-        suffixBranchName=currentBranchName.replaceFirst(/^(?:release|hotfix)\//,""
+        suffixBranchName=currentBranchName.replaceFirst(/^(?:release|hotfix)\//,"")
         echo "we are in release/$suffixBranchName"
-        if (suffixBranchName.?.trim()){
+        if (suffixBranchName?.trim()){
             countSince=(currentBranchName==~/^release/?
                 gitUtils.commitsCountSinceBranch("develop"):
                 gitUtils.commitsCountSinceBranch("master"))
