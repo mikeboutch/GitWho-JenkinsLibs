@@ -10,7 +10,7 @@ def version(){
             return currentTags
         } else {
             //error
-            return ""
+            return "error Master"
         }
     } 
     if ( currentBranchName==~/^(?:release|hotfix)\// ){
@@ -23,9 +23,9 @@ def version(){
             return suffixBranchName+"-rc"+(countSince>0?countsince:"")
         } else {
             //error
-            return ""
+            return "Error Master"
         }
     } else { //now
-
+        return "batard."
     }
 }
