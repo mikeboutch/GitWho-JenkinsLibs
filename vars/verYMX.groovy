@@ -1,5 +1,5 @@
 
-def verYMX(){
+def version(){
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
     //def suffixBranchName=""
@@ -12,7 +12,7 @@ def verYMX(){
             //error
             return ""
         }
-    } else if ( suffixBranchName=currentBranchName.replaceFirst(/^(?:release|hotfix)\//,"") ){
+    } /*else if ( suffixBranchName=currentBranchName.replaceFirst(/^(?:release|hotfix)\//,"") ){
         echo "we are in release/$suffixBranchName"
         if (suffixBranchName.?.trim()){
             def countSince=(currentBranchName ~=/^release/?
@@ -25,5 +25,5 @@ def verYMX(){
         }
     } else { //now
 
-    }
+    }*/
 }
