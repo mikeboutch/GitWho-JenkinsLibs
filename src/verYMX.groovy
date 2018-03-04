@@ -1,5 +1,5 @@
 def verYMX(){
-    echo "we are in verYMX"
+    return "we are in verYMX"
 }
 def version(){
     def currentBranchName=gitUtils.currentBranchName()
