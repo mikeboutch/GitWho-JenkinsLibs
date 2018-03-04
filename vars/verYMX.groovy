@@ -22,7 +22,7 @@ def version(){
             countSince=(currentBranchName==~/release.*/?
                 gitUtils.commitsCountSinceBranch("develop"):
                 gitUtils.commitsCountSinceBranch("master"))
-            return suffixBranchName+"-rc"+(countSince>0?countSince:"")
+            return suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
         } else {
             //error
             return "Error Master"
