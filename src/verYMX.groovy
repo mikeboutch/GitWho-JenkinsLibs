@@ -1,4 +1,6 @@
-
+def verYMX(){
+    return "we are in verYMX"
+}
 def version(){
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
