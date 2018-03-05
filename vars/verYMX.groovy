@@ -7,16 +7,16 @@ def verYMX(){ return "varYMX"; }
 // def extractSemver(s){
 
 // }
-// def getNowYYMM(){
-//     now=new Date()
-//     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
-//         (new SimpleDateFormat("MM")).format(now).toInteger()]​
-// }
-// // get a incrmented version
-// def getCurrentPreVersionYMX(){
-//     echo "we are in getCurrentPreVersion"
-//     return ""
-// }
+def getNowYYMM(){
+    now=new Date()
+    return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
+        (new SimpleDateFormat("MM")).format(now).toInteger()]​
+}
+// get a incrmented version
+def getCurrentPreVersionYMX(){
+    echo "we are in getCurrentPreVersion"
+    return ""
+}
 
 def version(){
     if (binding.hasVariable('version')){return version}
@@ -53,7 +53,7 @@ def version(){
         }
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
-        version=getCurrentPreVersionYMX()
+        version=this.getCurrentPreVersionYMX()
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
