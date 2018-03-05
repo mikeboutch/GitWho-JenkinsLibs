@@ -11,11 +11,11 @@ def version(){
         currentTags=gitUtils.currentTags()
         echo "we are in master $currentTags"
         if (currentTags?.trim()){
-            env.GIT_VERSION=version=currentTags
+            env.JOB_VERSION=version=currentTags
             return version
         } else {
             //error
-            error ("Error Master as no tag")
+            error "Error Master as no tag"
             return
         }
     } 
@@ -26,12 +26,17 @@ def version(){
             countSince=(currentBranchName==~/release.*/?
                 gitUtils.commitsCountSinceBranch("develop"):
                 gitUtils.commitsCountSinceBranch("master"))
-            version=suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
+            env.JOB_VERSION=version=suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
             return version
         } else {
-            err
+            error ("Error with branch $currentBranchName")
+            return
         }
-    } else { //now
-        return "batard."
+    } 
+    if ( currentBranchName==~/(?:develop|feature\/.*)/ ) 
+        return "OK"
+    else { //now
+        error "Error not valid GitFlow branch name: $currentBranchName"
+        return 
     }
 }
