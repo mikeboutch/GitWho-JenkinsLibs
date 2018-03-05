@@ -17,7 +17,7 @@ def version(){
             version=currentTags
             env.JOB_VERSION=version
             currentBuild.displayName=version
-            return  
+            return   version
         } else {
             //error
             error "Error Master as no tag"
