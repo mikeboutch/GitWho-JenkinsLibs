@@ -41,11 +41,11 @@ def version(){
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         version="bob"
         //echo getCurrentPreVersionYMX()
-        if (currentBranchName==~/develop/) {
-            echo "we are in develop"
-        } else if (currentBranchName==~/feature\/.*/) {
-            echo "we are in feature/"
-        }
+        // if (currentBranchName==~/develop/) {
+        //     echo "we are in develop"
+        // } else if (currentBranchName==~/feature\/.*/) {
+        //     echo "we are in feature/"
+        // }
         env.JOB_VERSION= version
         currentBuild.displayName= version
         return version 
