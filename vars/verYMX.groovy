@@ -60,6 +60,13 @@ def incVerYMX(){
     return "bob"
 }
 
+def nowYYMM(){
+     now=new Date()
+     YY=(new SimpleDateFormat("YY")).format(now).toInteger()
+     MM=(new SimpleDateFormat("MM")).format(now).toInteger()
+     return [YY,MM]
+ }
+ 
 // get a incrmented version
 // def getCurrentPreVersionYMX(){
 //     //echo "we are in getCurrentPreVersion"
