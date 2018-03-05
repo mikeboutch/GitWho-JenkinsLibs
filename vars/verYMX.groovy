@@ -40,7 +40,7 @@ def version(){
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         version="bob"
-        echo getCurrentPreVersionYMX()
+        //echo getCurrentPreVersionYMX()
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
@@ -56,10 +56,10 @@ def version(){
 }
 
 // get a incrmented version
-def getCurrentPreVersionYMX(){
-    //echo "we are in getCurrentPreVersion"
-    return "bob"
-}
+// def getCurrentPreVersionYMX(){
+//     //echo "we are in getCurrentPreVersion"
+//     return "bob"
+// }
 // def getNowYYMM(){
 //      def now=new Date()
 //      return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
