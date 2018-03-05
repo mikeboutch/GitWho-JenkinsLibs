@@ -14,7 +14,9 @@ def version(){
         currentTags=gitUtils.currentTags()
         echo "we are in master $currentTags"
         if (currentTags?.trim()){
-            env.JOB_VERSION=version=currentTags
+            version=currentTags
+            env.JOB_VERSION=version
+            displayName=version
             return version
         } else {
             //error
