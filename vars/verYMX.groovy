@@ -14,7 +14,7 @@ def getNowYYMM(){
 }
 // get a incrmented version
 def getCurrentPreVersionYMX(){
-    echo "we are in getCurrentPreVersion"
+    //echo "we are in getCurrentPreVersion"
     return "bob"
 }
 
