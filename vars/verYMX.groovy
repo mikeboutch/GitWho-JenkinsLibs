@@ -57,7 +57,8 @@ def version(){
 }
 
 def incVerYMX(){
-    return "bob"
+    incVersion=nowYYMM[0].toString+"."+nowYYMM[1]
+    return incVersion
 }
 
 def nowYYMM(){
@@ -66,7 +67,7 @@ def nowYYMM(){
      MM=(new SimpleDateFormat("MM")).format(now).toInteger()
      return [YY,MM]
  }
- 
+
 // get a incrmented version
 // def getCurrentPreVersionYMX(){
 //     //echo "we are in getCurrentPreVersion"
