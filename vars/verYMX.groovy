@@ -53,7 +53,7 @@ def version(){
         }
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
-        version="bob" //getCurrentPreVersionYMX()
+        version=getCurrentPreVersionYMX()
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
