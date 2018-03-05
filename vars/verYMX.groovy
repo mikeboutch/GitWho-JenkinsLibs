@@ -40,12 +40,12 @@ def version(){
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         version="bob"
-        //echo getCurrentPreVersionYMX()
-        // if (currentBranchName==~/develop/) {
-        //     echo "we are in develop"
-        // } else if (currentBranchName==~/feature\/.*/) {
-        //     echo "we are in feature/"
-        // }
+        echo getCurrentPreVersionYMX()
+        if (currentBranchName==~/develop/) {
+            echo "we are in develop"
+        } else if (currentBranchName==~/feature\/.*/) {
+            echo "we are in feature/"
+        }
         env.JOB_VERSION= version
         currentBuild.displayName= version
         return version 
@@ -55,11 +55,17 @@ def version(){
     }
 }
 
-def getNowYYMM(){
-     def now=new Date()
-     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
-         (new SimpleDateFormat("MM")).format(now).toInteger()]​
+// get a incrmented version
+def getCurrentPreVersionYMX(){
+    //echo "we are in getCurrentPreVersion"
+    return "bob"
 }
+// def getNowYYMM(){
+//      def now=new Date()
+//      return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
+//          (new SimpleDateFormat("MM")).format(now).toInteger()]​
+// }
+
 
 // def getlatestSemver(a1,a2){
 //     return a1
@@ -69,11 +75,7 @@ def getNowYYMM(){
 // }
 
 
-// // get a incrmented version
-// def getCurrentPreVersionYMX(){
-//     //echo "we are in getCurrentPreVersion"
-//     return "bob"
-// }
+
 // def incVersionYMX(){
 //     return "bob"
 // }
