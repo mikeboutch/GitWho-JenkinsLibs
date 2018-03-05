@@ -1,5 +1,27 @@
+import java.text.SimpleDateFormat
 
 def verYMX(){ return "varYMX"; }
+def getlatestSemver(a1,a2){
+    return a
+}
+def extractSemver(s){
+
+}
+def getNowYYMM(){
+    now=new Date()
+    return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
+        (new SimpleDateFormat("MM")).format(now).toInteger()]​
+}
+// get a incrmented version
+def getCurrentPreVersionYMX(){
+    //latesrReleaseRCVersion=getGreaterSemver(gitUtils.lastedTags(),gitUtils.showSuffixOfBranchName("release"))
+    //currentYM=...
+
+    
+
+    println()
+    return ""
+}
 
 def version(){
     if (binding.hasVariable('version')){return version}
@@ -23,7 +45,7 @@ def version(){
         suffixBranchName=currentBranchName.replaceFirst(/^(?:release|hotfix)\//,"")
         echo "we are in release/$suffixBranchName"
         if (suffixBranchName?.trim()){
-            countSince=(currentBranchName==~/release.*/?
+            countSince=(currentBranchName==~/release\/.*/?
                 gitUtils.commitsCountSinceBranch("develop"):
                 gitUtils.commitsCountSinceBranch("master"))
             version=suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
@@ -36,7 +58,12 @@ def version(){
         }
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
-        version="$currentBranchName"
+        version=getCurrentPreVersionYMX()
+        if (currentBranchName==~/develop/) {
+            echo "we are in develop"
+        } else if (currentBranchName==~/feature\/.*/) {
+            echo "we are in feature/"
+        }
         env.JOB_VERSION= version
         currentBuild.displayName= version
         return version 
