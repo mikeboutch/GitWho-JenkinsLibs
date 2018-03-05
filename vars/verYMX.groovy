@@ -61,17 +61,17 @@ def version(){
 // def extractSemver(s){
 
 // }
-def getNowYYMM(){
-    now=new Date()
-    return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
-        (new SimpleDateFormat("MM")).format(now).toInteger()]​
-}
+// def getNowYYMM(){
+//     now=new Date()
+//     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
+//         (new SimpleDateFormat("MM")).format(now).toInteger()]​
+// }
 
-// get a incrmented version
-def getCurrentPreVersionYMX(){
-    //echo "we are in getCurrentPreVersion"
-    return "bob"
-}
-def incVersionYMX(){
-    return "bob"
-}
+// // get a incrmented version
+// def getCurrentPreVersionYMX(){
+//     //echo "we are in getCurrentPreVersion"
+//     return "bob"
+// }
+// def incVersionYMX(){
+//     return "bob"
+// }
