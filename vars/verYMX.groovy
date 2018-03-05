@@ -39,8 +39,8 @@ def version(){
         }
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
-        version="bob"
-        //echo getCurrentPreVersionYMX()
+        //version="bob"
+        version=incVerYMX
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
@@ -54,6 +54,10 @@ def version(){
         return 
     }
     return
+}
+
+def incVerYMX(){
+    return "bob"
 }
 
 // get a incrmented version
@@ -74,9 +78,3 @@ def version(){
 // def extractSemver(s){
 
 // }
-
-
-
-def incVersionYMX(){
-    return "bob"
-}
