@@ -1,15 +1,10 @@
 
-
-def verYMX(){
-
-    return "varYMX"
-}
+def verYMX(){ return "varYMX"; }
 
 def version(){
     if (binding.hasVariable('version')){return version}
     def currentBranchName=gitUtils.currentBranchName()
-    //def currentTags=""
-    //def suffixBranchName=""
+    env.JOB_VERSION=""
     if (currentBranchName=="master") {
         currentTags=gitUtils.currentTags()
         echo "we are in master $currentTags"
