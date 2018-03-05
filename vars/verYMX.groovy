@@ -1,26 +1,20 @@
-//import java.text.SimpleDateFormat
+import java.text.SimpleDateFormat
 
 def verYMX(){ return "varYMX"; }
-def getlatestSemver(a1,a2){
-    return a1
-}
-def extractSemver(s){
+// def getlatestSemver(a1,a2){
+//     return a1
+// }
+// def extractSemver(s){
 
-}
+// }
 def getNowYYMM(){
-
     now=new Date()
     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
         (new SimpleDateFormat("MM")).format(now).toInteger()]​
 }
 // get a incrmented version
 def getCurrentPreVersionYMX(){
-    //latesrReleaseRCVersion=getGreaterSemver(gitUtils.lastedTags(),gitUtils.showSuffixOfBranchName("release"))
-    //currentYM=...
-
-    
-
-    println()
+    echo "we are in getCurrentPreVersion"
     return ""
 }
 
