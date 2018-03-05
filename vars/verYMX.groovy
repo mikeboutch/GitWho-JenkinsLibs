@@ -53,6 +53,7 @@ def version(){
         error "Error not valid GitFlow branch name: $currentBranchName"
         return 
     }
+    return
 }
 
 // get a incrmented version
