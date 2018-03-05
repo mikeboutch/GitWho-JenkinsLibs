@@ -16,7 +16,7 @@ def version(){
         if (currentTags?.trim()){
             version=currentTags
             env.JOB_VERSION=version
-            displayName=version
+            currentBuild.displayName=version
             return version
         } else {
             //error
