@@ -5,6 +5,7 @@ def verYMX(){
     //return 
 }
 def version(){
+    if (!version?.trim()){}
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
     //def suffixBranchName=""
@@ -34,8 +35,9 @@ def version(){
             return
         }
     } 
-    if ( currentBranchName==~/(?:develop|feature\/.*)/ ) 
-        return "OK"
+    if ( currentBranchName==~/(?:develop|feature\/.*)/ )
+        env.JOB_VERSION=version="$currentBranchName" 
+        return version
     else { //now
         error "Error not valid GitFlow branch name: $currentBranchName"
         return 
