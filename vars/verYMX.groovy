@@ -15,7 +15,7 @@ def getNowYYMM(){
 // get a incrmented version
 def getCurrentPreVersionYMX(){
     echo "we are in getCurrentPreVersion"
-    return ""
+    return "bob"
 }
 
 def version(){
@@ -53,7 +53,7 @@ def version(){
         }
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
-        version=this.getCurrentPreVersionYMX()
+        version=verYMX.getCurrentPreVersionYMX()
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
