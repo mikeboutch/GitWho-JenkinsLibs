@@ -2,7 +2,7 @@
 
 def verYMX(){ return "varYMX"; }
 def getlatestSemver(a1,a2){
-    return a
+    return a1
 }
 def extractSemver(s){
 
