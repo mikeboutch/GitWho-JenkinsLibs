@@ -1,6 +1,8 @@
 def verYMX(){
     return "we are in verYMX"
 }
+def version=""
+
 def version(){
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
@@ -9,10 +11,12 @@ def version(){
         currentTags=gitUtils.currentTags()
         echo "we are in master $currentTags"
         if (currentTags?.trim()){
-            return currentTags
+            env.GIT_VERSION=version=currentTags
+            return version
         } else {
             //error
-            return "error Master"
+            error ("Error Master as no tag")
+            return
         }
     } 
     if ( currentBranchName==~/(?:release|hotfix)\/.*/ ){
@@ -22,10 +26,10 @@ def version(){
             countSince=(currentBranchName==~/release.*/?
                 gitUtils.commitsCountSinceBranch("develop"):
                 gitUtils.commitsCountSinceBranch("master"))
-            return suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
+            version=suffixBranchName+"-rc"+(countSince.toInteger()>0?countSince:"")
+            return version
         } else {
-            //error
-            return "Error Master"
+            err
         }
     } else { //now
         return "batard."
