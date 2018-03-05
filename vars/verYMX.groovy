@@ -57,7 +57,7 @@ def version(){
 }
 
 def incVerYMX(){
-    incVersion=nowYYMM[0].toString+"."+nowYYMM[1]
+    incVersion=nowYYMM()[0].toString+"."+nowYYMM()[1]
     return incVersion
 }
 
