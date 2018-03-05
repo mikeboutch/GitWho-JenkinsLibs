@@ -1,11 +1,12 @@
 
 
 def verYMX(){
-    version=""
-    //return 
+
+    return "varYMX"
 }
+
 def version(){
-    if (binding.hasVariable('version'){return version}
+    if (binding.hasVariable('version')){return version}
     def currentBranchName=gitUtils.currentBranchName()
     //def currentTags=""
     //def suffixBranchName=""
