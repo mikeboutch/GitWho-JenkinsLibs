@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat
+//import java.text.SimpleDateFormat
 
 def verYMX(){ return "varYMX"; }
 def getlatestSemver(a1,a2){
@@ -8,6 +8,7 @@ def extractSemver(s){
 
 }
 def getNowYYMM(){
+
     now=new Date()
     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
         (new SimpleDateFormat("MM")).format(now).toInteger()]​
