@@ -1,6 +1,8 @@
 import java.text.SimpleDateFormat
 
-def verYMX(){ return "varYMX"; }
+def verYMX(){ 
+    return "varYMX"
+}
 // def getlatestSemver(a1,a2){
 //     return a1
 // }
@@ -12,6 +14,7 @@ def getNowYYMM(){
     return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
         (new SimpleDateFormat("MM")).format(now).toInteger()]​
 }
+
 // get a incrmented version
 def getCurrentPreVersionYMX(){
     //echo "we are in getCurrentPreVersion"
@@ -54,7 +57,7 @@ def version(){
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         version="bob"
-        //echo verYMX.getCurrentPreVersionYMX()
+        //echo getCurrentPreVersionYMX()
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
