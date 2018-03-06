@@ -67,7 +67,18 @@ def nowYYMM(){
      YY=(new SimpleDateFormat("YY")).format(now).toInteger()
      MM=(new SimpleDateFormat("MM")).format(now).toInteger()
      return [YY,MM]
- }
+}
+
+def splitVersion(v){
+    if ((m=v=~/^(\d+)\.(\d+)\.(\d+)(?:|\.(\d+)|((?:\+|-).*))$/)){
+        println m[0].size()
+        println m[0]
+        return m[0]
+    } else {
+        //error "No valid version number:$v"
+        return [0,0,0,0,""]
+    }
+}
 
 // get a incrmented version
 // def getCurrentPreVersionYMX(){
