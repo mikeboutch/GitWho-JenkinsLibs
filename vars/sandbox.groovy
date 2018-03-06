@@ -40,7 +40,7 @@ def greaterVersion(v1,v2) {
 
 println greaterVersion("1123.4334.5455","1123.4334.55.234")
 println splitVersion("1123.4334")
-println greaterVersion("1123.4334.45+sdfghj-sdfghj","1123.4334.56-24567890,4")
+println greaterVersion("1123.4334.56-24567890,4","1123.4334.45+sdfghj-sdfghj")
 
 
 

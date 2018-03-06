@@ -40,7 +40,8 @@ def version(){
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         //version="bob"
-        version=incVerYMX()
+        gv=greaterVersion(gitUtils.lastedTags(),gitUtils.latestSuffixOfBranch("release"))
+        version=gv
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
         } else if (currentBranchName==~/feature\/.*/) {
@@ -51,9 +52,7 @@ def version(){
         return version 
     } else { //now
         error "Error not valid GitFlow branch name: $currentBranchName"
-        return 
     }
-    return
 }
 
 def incVerYMX(){
