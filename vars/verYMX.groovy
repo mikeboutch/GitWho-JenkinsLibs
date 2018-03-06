@@ -70,31 +70,35 @@ def nowYYMM(){
 }
 
 def splitVersion(v){
-    if ((m=v=~/^(\d+)\.(\d+)\.(\d+)(?:|\.(\d+)|((?:\+|-).*))$/)){
-        println m[0].size()
-        println m[0]
-        return m[0]
+    if ((m=v=~/^(\d+)\.(\d+)(?:|\.(\d+)(?:|\.(\d+)|((?:\+|-).*)))$/)){
+        return m[0][1..-1]
     } else {
         //error "No valid version number:$v"
         return [0,0,0,0,""]
     }
 }
 
-// get a incrmented version
-// def getCurrentPreVersionYMX(){
-//     //echo "we are in getCurrentPreVersion"
-//     return "bob"
-// }
-// def getNowYYMM(){
-//      def now=new Date()
-//      return [ (new SimpleDateFormat("YY")).format(now).toInteger(), 
-//          (new SimpleDateFormat("MM")).format(now).toInteger()]​
-// }
 
+def greaterVersion(v1,v2, Integer column) {
+    a1=splitVersion(v1)
+    a2=splitVersion(v2)
+    if (a1[0]>a2[0] ||
+            (a1[0]==a2[0] && a1[1]>a2[1]) ||
+            (a1[0]==a2[0] && a1[1]==a2[1] && a1[2]>a2[2]) ||
+            (column==4 && a1[0]==a2[0] && a1[1]==a2[1] && a1[2]==a2[2] && a1[3]>a2[3]) ||
+            (column==5 && a1[0]==a2[0] && a1[1]==a2[1] && a1[2]==a2[2] && a1[3]==a2[3] && a1[3]>a2[3])) {
+        //println "a1 is greater $column"
+        return v1
+    } else if (a1[0]<a2[0] ||
+            (a1[0]==a2[0] && a1[1]<a2[1]) ||
+            (a1[0]==a2[0] && a1[1]==a2[1] && a1[2]<a2[2]) ||
+            (column==4 && a1[0]==a2[0] && a1[1]==a2[1] && a1[2]==a2[2] && a1[3]<a2[3]) ||
+            (column==5 && a1[0]==a2[0] && a1[1]==a2[1] && a1[2]==a2[2] && a1[3]==a2[3] && a1[3]<a2[3])){
+        //println "a2 is greater"
 
-// def getlatestSemver(a1,a2){
-//     return a1
-// }
-// def extractSemver(s){
-
-// }
+        return v2
+    } else return v1
+}
+def greaterVersion(v1,v2) {
+    return greaterVersion(v1,v2,3)
+}
