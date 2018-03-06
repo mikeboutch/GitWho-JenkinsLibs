@@ -41,8 +41,9 @@ def version(){
     } 
     if ( currentBranchName==~/(?:develop|feature\/.*)/ ){
         //version="bob"
-        gv=greaterVersion(gitUtils.lastedTags(),gitUtils.latestSuffixOfBranch("release"))
-        version=gv
+        gv="bob"
+        echo greaterVersion(gitUtils.lastedTags(),gitUtils.latestSuffixOfBranch("release"))
+        version
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
             version+="-beta"
