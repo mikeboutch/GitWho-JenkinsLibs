@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 def verYMX(){ 
     return "varYMX"
 }
-def version
+
 
 def version(){
     if (binding.hasVariable('version')){return version}
