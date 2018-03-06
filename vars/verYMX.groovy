@@ -43,7 +43,7 @@ def version(){
         //version="bob"
         gv="bob"
         echo greaterVersion(gitUtils.lastedTags(),gitUtils.latestSuffixOfBranch("release"))
-        version
+        version=gv
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
             version+="-beta"
