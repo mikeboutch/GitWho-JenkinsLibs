@@ -45,8 +45,10 @@ def version(){
         version=gv
         if (currentBranchName==~/develop/) {
             echo "we are in develop"
+            version+="-beta"
         } else if (currentBranchName==~/feature\/.*/) {
             echo "we are in feature/"
+            version+="-alpha"
         }
         env.JOB_VERSION= version
         currentBuild.displayName= version
@@ -56,11 +58,11 @@ def version(){
     }
 }
 
-def incVerYMX(){
-    nowYYMM()
-    incVersion="${YY}.${MM}"
-    return incVersion
-}
+//def incVerYMX(){
+//    nowYYMM()
+//    incVersion="${YY}.${MM}"
+//    return incVersion
+//}
 
 def nowYYMM(){
      now=new Date()
