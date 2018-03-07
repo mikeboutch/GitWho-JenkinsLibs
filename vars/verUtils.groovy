@@ -44,7 +44,8 @@ def verYMX() {
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         nowYYMMDD()
         la = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
-        if (la[0]==YY && la[1]==MM) {
+        echo "debug la ${la[0]} ${la[1]} ${la[2]} "
+        if (la[0].toInteger()==YY && la[1].toInteger()==MM) {
             la[2]+=1
             version=la.join('.')
         } else {
