@@ -1,11 +1,11 @@
 import java.text.SimpleDateFormat
 
-def verYMX() {
+def verUtils() {
     return "varYMX"
 }
 
 
-def version() {
+def verYMX() {
     if (binding.hasVariable('version')) {
         return version
     }
@@ -43,7 +43,7 @@ def version() {
     }
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         //version="bob"
-        la = this.greaterVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
+        la = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
         version = la.join('.')
         if (currentBranchName ==~ /develop/) {
             echo "we are in develop"
@@ -61,16 +61,18 @@ def version() {
 }
 
 //def incVerYMX(){
-//    nowYYMM()
+//    nowYYMMDD()
 //    incVersion="${YY}.${MM}"
 //    return incVersion
 //}
 
-def nowYYMM() {
+def nowYYMMDD() {
     now = new Date()
     YY = (new SimpleDateFormat("YY")).format(now).toInteger()
     MM = (new SimpleDateFormat("MM")).format(now).toInteger()
-    return [YY, MM]
+    DD = (new SimpleDateFormat("DD")).format(now).toInteger()
+    echo "current Date: $YY $MM $DD"
+    return [YY, MM, DD]
 }
 
 @NonCPS
@@ -83,7 +85,7 @@ def splitVersion(v) {
     }
 }
 
-def greaterVersion(v1, v2) {
+def latestVersion(v1, v2) {
     def a1 = this.splitVersion(v1)
     def a2 = this.splitVersion(v2)
     if (a2==[0,0,0] || a1[0] > a2[0] ||
