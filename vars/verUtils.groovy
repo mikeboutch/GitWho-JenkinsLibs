@@ -44,7 +44,12 @@ def verYMX() {
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         //version="bob"
         la = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
-        version = la.join('.')
+        if (la[0]==YY && la[1]==MM) {
+            la[2]+=1
+            version=la.join('.')
+        } else {
+            version="${YY}.${MM}.1"
+        }
         if (currentBranchName ==~ /develop/) {
             echo "we are in develop"
             version += "-beta"
