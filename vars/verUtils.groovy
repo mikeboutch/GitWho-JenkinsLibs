@@ -57,6 +57,7 @@ def verYMX() {
             echo "we are in feature/"
             version += "-alpha"
         }
+        version+='-'+String.format("%02d", DD)+'-'+gitUtils.currentCommitShortHash()
         env.JOB_VERSION = version
         currentBuild.displayName = version
         return version
