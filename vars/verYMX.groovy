@@ -84,10 +84,8 @@ def splitVersion(v) {
 
 
 def greaterVersion(v1, v2) {
-    a1 = this.splitVersion(v1)
-    a2 = this.splitVersion(v2)
-    println(a1)
-    println a2
+    def a1 = this.splitVersion(v1)
+    def a2 = this.splitVersion(v2)
     if (a2==[0,0,0] || a1[0] > a2[0] ||
             (a1[0] == a2[0] && a1[1] > a2[1]) ||
             (a1[0] == a2[0] && a1[1] == a2[1] && a1[2] > a2[2])) {
