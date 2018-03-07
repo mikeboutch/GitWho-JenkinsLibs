@@ -75,7 +75,7 @@ def nowYYMM() {
 
 @NonCPS
 def splitVersion(v) {
-    if ((m = v =~ /^(\d+)\.(\d+)(?:|\.(\d+)(?:|\.(\d+)|((?:\+|-).*)))$/)) {
+    if ((m = v =~ /^(\d+)\.(\d+)(?:|\.(\d+))(?:|\.(\d+)|((?:\+|-).*))$/)) {
         return m[0][1..-1]
     } else {
         //error "No valid version number:$v"
