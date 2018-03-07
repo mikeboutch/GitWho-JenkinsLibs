@@ -78,7 +78,7 @@ def splitVersion(v) {
     if ((m = v =~ /^(\d+)\.(\d+)\.(\d+)$/)){
         return m[0][1..-1]
     } else {
-        return [0, 0, 0]
+        return ["0", "0", "0"]
     }
 }
 
