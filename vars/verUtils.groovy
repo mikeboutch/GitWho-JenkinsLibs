@@ -42,7 +42,7 @@ def verYMX() {
         }
     }
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
-        //version="bob"
+        nowYYMMDD()
         la = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
         if (la[0]==YY && la[1]==MM) {
             la[2]+=1
