@@ -86,7 +86,7 @@ def nowYYMMDD() {
 def splitVersion(v) {
     m=v.split(/\./)
     if (m.size()==3){
-        return m
+        return [m[0].toInteger(),m[1].toInteger(),m[2].toInteger()]
     } else {
         return [0, 0, 0]
     }
