@@ -73,13 +73,15 @@ def nowYYMM() {
     return [YY, MM]
 }
 
-@NonCPS
+
 def splitVersion(v) {
-    if ((m = v =~ /^(\d+)\.(\d+)(?:|\.(\d+))(?:|\.(\d+)|((?:\+|-).*))$/)) {
+    if ((m = v =~ /^(\d+)\.(\d+)(?:|\.(\d+))$/)){
+        return m[0][1..-1]<<null<<null
+    } else if ((m = v =~ /^(\d+)\.(\d+).(\d+)(?:\.(\d+)|((?:\+|-).*))$/)) {
         return m[0][1..-1]
     } else {
         //error "No valid version number:$v"
-        return [0, 0, 0, 0, ""]
+        return [0, 0, 0, null, null]
     }
 }
 
