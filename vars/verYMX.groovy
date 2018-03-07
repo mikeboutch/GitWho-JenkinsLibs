@@ -43,8 +43,8 @@ def version() {
     }
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         //version="bob"
-        gv = this.greaterVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
-        version = gv
+        la = this.greaterVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
+        version = la.join('.')
         if (currentBranchName ==~ /develop/) {
             echo "we are in develop"
             version += "-beta"
@@ -90,13 +90,13 @@ def greaterVersion(v1, v2) {
             (a1[0] == a2[0] && a1[1] > a2[1]) ||
             (a1[0] == a2[0] && a1[1] == a2[1] && a1[2] > a2[2])) {
         //println "a1 is greater $column"
-        return v1
+        return a1
     } else if (a1==[0,0,0] || a1[0] < a2[0] ||
             (a1[0] == a2[0] && a1[1] < a2[1]) ||
             (a1[0] == a2[0] && a1[1] == a2[1] && a1[2] < a2[2])) {
         //println "a2 is greater"
 
-        return v2
-    } else return v1
+        return a2
+    } else return a1
 }
 
