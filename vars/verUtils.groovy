@@ -76,8 +76,8 @@ def nowYYMMDD() {
     now = new Date()
     YY = (new SimpleDateFormat("YY")).format(now).toInteger()
     MM = (new SimpleDateFormat("MM")).format(now).toInteger()
-    DD = (new SimpleDateFormat("DD")).format(now).toInteger()
-    echo "current Date: $YY $MM $DD"
+    DD = (new SimpleDateFormat("dd")).format(now).toInteger()
+    echo "current Date: $YY $MM $dd"
     return [YY, MM, DD]
 }
 
