@@ -73,7 +73,7 @@ def nowYYMM() {
     return [YY, MM]
 }
 
-
+@NonCPS
 def splitVersion(v) {
     if ((m = v =~ /^(\d+)\.(\d+)\.(\d+)$/)){
         return m[0][1..-1]
@@ -82,7 +82,7 @@ def splitVersion(v) {
     }
 }
 
-
+@NonCPS
 def greaterVersion(v1, v2) {
     def a1 = this.splitVersion(v1)
     def a2 = this.splitVersion(v2)
