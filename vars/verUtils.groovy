@@ -43,11 +43,11 @@ def verYMX() {
     }
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         nowYYMMDD()
-        la = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
-        echo "debug la ${la[0]} ${la[1]} ${la[2]} "
-        if (la[0].toInteger()==YY && la[1].toInteger()==MM) {
-            la[2]+=1
-            version=la.join('.')
+        def lv = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
+        echo "debug la ${lv[0]} ${lv[1]} ${lv[2]} "
+        if (lv[0].toInteger()==YY && lv[1].toInteger()==MM) {
+            lv[2]+=1
+            version=lv.join('.')
         } else {
             version="${YY}.${MM}.1"
         }
@@ -104,7 +104,6 @@ def latestVersion(v1, v2) {
             (a1[0] == a2[0] && a1[1] < a2[1]) ||
             (a1[0] == a2[0] && a1[1] == a2[1] && a1[2] < a2[2])) {
         //println "a2 is greater"
-
         return a2
     } else return a1
 }
