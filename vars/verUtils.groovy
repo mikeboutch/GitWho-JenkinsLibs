@@ -44,7 +44,7 @@ def verYMX() {
     if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
         nowYYMMDD()
         def lv = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
-        if (lv[0].toInteger()==YY && lv[1].toInteger()==MM) {
+        if (lv[0]==YY && lv[1]==MM) {
             lv[2]+=1
             version=lv.join('.')
         } else {
@@ -57,7 +57,7 @@ def verYMX() {
             echo "we are in feature/"
             version += "-alpha"
         }
-        version+='-'+String.format("%02d", DD)+'-'+gitUtils.currentCommitShortHash()
+        version+=String.format("-%02d-%s", DD,gitUtils.currentCommitShortHash())
         env.JOB_VERSION = version
         currentBuild.displayName = version
         return version
