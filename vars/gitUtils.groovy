@@ -17,7 +17,7 @@ def currentCommitShortHash(){
 }
 
 def lastedTags() {
-    return sh(returnStdout: true, script: 'git describe --abbrev=0 --tags 2>/dev/null || true').trim()
+    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git describe --abbrev=0 --tags 2>/dev/null || true').trim()
 }
 
 def currentTags() {
