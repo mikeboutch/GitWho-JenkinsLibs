@@ -21,7 +21,7 @@ def lastedTags() {
 }
 
 def currentTags() {
-    return sh(returnStdout: true, script: 'git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").
+    return sh(returnStdout: true, script: 'git fetch --tags &>/dev/null;git name-rev --tags --name-only HEAD').trim().replaceFirst(/\^0$/,"").
         replaceFirst(/^undefined$/,"")
 }
 

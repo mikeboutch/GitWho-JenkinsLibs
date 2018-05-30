@@ -6,6 +6,7 @@ def verUtils() {
 
 
 def verYMX() {
+    echo "1"
     if (binding.hasVariable('version')) {
         return version
     }
