@@ -25,7 +25,7 @@ def verYMX() {
             return
         }
     }
-    if (currentBranchName ==~ /(?:release|hotfix)\/.*/) {
+    if (currentBranchName ==~ /^(?:release|hotfix)\/.*/) {
         suffixBranchName = currentBranchName.replaceFirst(/^(?:release|hotfix)\//, "")
         echo "we are in release/$suffixBranchName"
         if (suffixBranchName?.trim()) {
