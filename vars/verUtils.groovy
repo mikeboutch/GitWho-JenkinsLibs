@@ -41,7 +41,7 @@ def verYMX() {
             return
         }
     }
-    if (currentBranchName ==~ /(?:develop|feature\/.*)/) {
+    if (currentBranchName ==~ /^(?:develop|feature\/.*)$/) {
         nowYYMMDD()
         def lv = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
         if (lv[0]==YY && lv[1]==MM) {
