@@ -10,8 +10,8 @@ def call(String buildStatus = 'STARTED') {
     // Default values
     def colorName = 'RED'
     def colorCode = '#FF0000'
-    def subject = "${buildStatus}: Job '${env.JOB_NAME} [${currentBuild.displayName}][${env.BUILD_NUMBER}]'"
-    def summary = "${subject} (${env.RUN_DISPLAY_URL}) [${currentBuild.durationString}]"
+    def subject = "${buildStatus}: Job '${env.JOB_NAME} <br\> ${currentBuild.displayName} - ${env.BUILD_NUMBER} [\\${BUILD_DURATION}]"
+    def summary = "${subject} <br/> \${HIPCHAT_CHANGES_OR_CAUSE} <br/> \${BLUE_OCEAN_URL} <br\/> \${TEST_REPORT_URL}"
     def details = """<p>${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
     <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
     echo ${WorkflowScript.BLUE_OCEAN_URL}
