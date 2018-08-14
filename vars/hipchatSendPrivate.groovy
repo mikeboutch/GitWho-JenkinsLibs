@@ -4,7 +4,7 @@ import jenkins.plugins.hipchat.HipChatNotifier;
 import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
-def call(String messages) {
+def call(String message) {
     emails=getEmail10lastCommiter()
     emails="michel.buczynski@tdsecurities.com".readLines()
     server=getServer()
