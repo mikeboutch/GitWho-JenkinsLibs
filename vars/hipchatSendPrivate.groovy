@@ -30,10 +30,9 @@ def getServer() {
     return hipChatDesc.getServer()
 }
 def getToken() {
-    //HipChatNotifier.DescriptorImpl hipChatDesc =
-    //        Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
-    //credentialsId = hipChatDesc.getCredentialId().toString();
-    credentialsId = "HCsendMessage"
+    HipChatNotifier.DescriptorImpl hipChatDesc =
+            Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
+    credentialsId = hipChatDesc.getCredentialId().toString();
     creds = CredentialsProvider.lookupCredentials(StringCredentials.class, Jenkins.instance, null, null);
     for (c in creds) {
         if (c.id == credentialsId) {
