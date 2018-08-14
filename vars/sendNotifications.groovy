@@ -6,6 +6,9 @@
 def call(String buildStatus = 'STARTED') {
     // build status of null means successful
     buildStatus = buildStatus ?: 'SUCCESS'
+    notify=false
+    notifyCommiter=false
+
 
     // Default values
     def colorName = 'RED'
@@ -24,16 +27,19 @@ def call(String buildStatus = 'STARTED') {
     } else if (buildStatus == 'SUCCESS') {
         color = 'GREEN'
         colorCode = '#00FF00'
+        notifyCommiter=true
     } else {
         color = 'RED'
         colorCode = '#FF0000'
+        notify=true
+        notifyCommiter=true
     }
 
     // Send notifications
     //slackSend (color: colorCode, message: summary)
 
-    hipchatSend (color: color, notify: true, message: chatMessage)
-    hipchatSendPrivate(chatMessage)
+    hipchatSend (color: color, notify: notify, message: chatMessage)
+    if (notifyCommiter) hipchatSendPrivate(chatMessage)
 
     /*emailext (
             to: 'bitwiseman@bitwiseman.com',
