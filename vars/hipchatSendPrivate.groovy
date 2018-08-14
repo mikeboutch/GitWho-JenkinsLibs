@@ -23,8 +23,9 @@ def call(String message) {
                     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
             """) == 0)
                 println("hipchat: send to $email");
-            else echo("hipchat: NOT send to $email");
-        }
+            else
+                echo("hipchat: NOT send to $email");
+        } catch(Exception e) {}
     }
 }
 
