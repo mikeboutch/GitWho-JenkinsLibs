@@ -25,7 +25,7 @@ def call(String message) {
                 println("hipchat: send to $email");
             else
                 echo("hipchat: NOT send to $email");
-        } catch(Exception e) {}
+        } catch(Exception e) {echo("hipchat: NOT send to $email");}
     }
 }
 
