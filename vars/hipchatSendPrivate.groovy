@@ -20,7 +20,7 @@ def call(String message) {
         try {
             if (
                 sh(returnStdout: true, script: """
-                    curl -k -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'  --fail --silent --show-error 2>&1
+                    curl -k -H "Content-Type: application/json" https://$server/v2/user/$email/message?auth_token=$token -X POST -d '$json'  --fail --silent --show-error 2>&1
             """) == "")
                 println("hipchat: send to $email");
             else
