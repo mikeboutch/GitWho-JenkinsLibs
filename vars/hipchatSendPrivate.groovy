@@ -5,7 +5,7 @@ import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
-    sh """git log -10 --pretty=formats:'%ae'"""
+    sh """git log -10 --pretty=%ae|sort|uniq"""
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
