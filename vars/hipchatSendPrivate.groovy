@@ -18,7 +18,7 @@ def call(String message) {
     def json = JsonOutput.toJson(data)
    for (email in emails) {
        sh """
-    curl -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
+    curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
     """
        echo token
    }
