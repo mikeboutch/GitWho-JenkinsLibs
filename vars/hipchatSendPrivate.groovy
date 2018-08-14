@@ -42,5 +42,6 @@ def getToken() {
 }
 
 def getEmail10lastCommiter(){
-    return sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
+    emails=sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq")
+    return emails.readLines()
 }
