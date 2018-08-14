@@ -17,10 +17,10 @@ def call(String message) {
     ]
     def json = JsonOutput.toJson(data)
    for (email in emails) {
-   if ( sh  returnStatus: true, script: """
+   if ( sh ( returnStatus: true, script: """
     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
-    """ ==0) println "hipchat: send to $email";
-       else  println "hipchat: NOT send to $email";
+    """ ==0) ) println ("hipchat: send to $email");
+       else  echo( "hipchat: NOT send to $email");
    }
 }
 def getServer() {
