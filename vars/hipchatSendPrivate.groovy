@@ -21,14 +21,15 @@ def call(String message) {
        sh """
     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
     """
-       echo message
    }
 
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
             Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
-    return hipChatDesc.getServer()
+    server=hipChatDesc.getServer()
+    echo server
+    return
 }
 def getToken() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
