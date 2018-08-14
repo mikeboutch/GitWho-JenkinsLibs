@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
     def emails=sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
+    echo emails
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
