@@ -19,9 +19,9 @@ def call(String message) {
     for (email in emails) {
         try {
             if (
-                sh(returnStatus: true, script: """
+                sh(returnStdout: true, script: """
                     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
-            """) == 0)
+            """) == "")
                 println("hipchat: send to $email");
             else
                 echo("hipchat: NOT send to $email");
