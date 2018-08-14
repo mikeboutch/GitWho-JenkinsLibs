@@ -10,7 +10,8 @@ def call(String buildStatus = 'STARTED') {
     // Default values
     def colorName = 'RED'
     def colorCode = '#FF0000'
-    def chatMessage = """${buildStatus}: Job '${env.BUILD_TAG}' ${currentBuild.displayName} - \${BUILD_DURATION}<br/>
+    def chatMessage = """${buildStatus}: Job '${env.BUILD_TAG}'<br/>
+         ${currentBuild.displayName} - \${BUILD_DURATION}<br/>
          \${HIPCHAT_CHANGES_OR_CAUSE} <br/>
          \${BLUE_OCEAN_URL} <br/>
          \${TEST_REPORT_URL}"""
