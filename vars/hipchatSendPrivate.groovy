@@ -5,9 +5,7 @@ import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
-     emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider']]).each{
-         k,v -> println("${k}:${v}")
-     }
+     echo emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider']]).toString()
 
 }
 def getServer() {
