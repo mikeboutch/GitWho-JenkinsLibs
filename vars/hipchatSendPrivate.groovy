@@ -20,7 +20,7 @@ def call(String message) {
        sh """
     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
     """
-       echo token
+       echo message
    }
 
 }
@@ -30,9 +30,10 @@ def getServer() {
     return hipChatDesc.getServer()
 }
 def getToken() {
-    HipChatNotifier.DescriptorImpl hipChatDesc =
-            Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
-    credentialsId = hipChatDesc.getCredentialId().toString();
+    //HipChatNotifier.DescriptorImpl hipChatDesc =
+    //        Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
+    //credentialsId = hipChatDesc.getCredentialId().toString();
+    credentialsId = "HCsendMessage"
     creds = CredentialsProvider.lookupCredentials(StringCredentials.class, Jenkins.instance, null, null);
     for (c in creds) {
         if (c.id == credentialsId) {
