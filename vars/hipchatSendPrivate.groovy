@@ -17,7 +17,7 @@ def call(String message) {
     ]
     def json = JsonOutput.toJson(data)
    for (email in emails) {
-       sh """
+       sh  returnStatus: true, script: """
     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
     """
    }
