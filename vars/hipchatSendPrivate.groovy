@@ -5,10 +5,7 @@ import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
-    echo  em= emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider']])
-    echo em
-    echo em.toString()
-
+    sh """git log -10 --pretty=formats:'%ae'"""
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
