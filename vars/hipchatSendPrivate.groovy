@@ -5,10 +5,22 @@ import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
-    def emails=sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
-   for (em in emails) echo em
-    emails="michel.buczynski@tdsecurities.com"
-    for (em in emails.readLines()) echo em
+    emails=getEmail10lastCommiter()
+    emails="michel.buczynski@tdsecurities.com".readLines()
+    server=getServer()
+    token=getToken()
+    def data = [
+            message       : message,
+            notify        : true,
+            message_format: 'html'
+    ]
+    def json = JsonOutput.toJson(data)
+   for (email in emails.readLines()) {
+       sh """
+    curl -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
+    """
+   }
+
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
@@ -25,4 +37,8 @@ def getToken() {
             return c.getSecret()
         }
     }
+}
+
+def getEmail10lastCommiter(){
+    return sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
 }
