@@ -3,6 +3,7 @@
 import jenkins.plugins.hipchat.HipChatNotifier;
 import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import groovy.json.*;
 
 def call(String message) {
     emails=getEmail10lastCommiter()
