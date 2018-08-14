@@ -7,9 +7,8 @@ import groovy.json.*;
 
 def call(String message) {
     emails=getEmail10lastCommiter()
-    emails=["michel.buczynski@tdsecurities.com"]
+    //emails=["michel.buczynski@tdsecurities.com"]
     server=getServer()
-    println server
     token=getToken()
     def data = [
             message       : message,

@@ -33,6 +33,7 @@ def call(String buildStatus = 'STARTED') {
     //slackSend (color: colorCode, message: summary)
 
     hipchatSend (color: color, notify: true, message: chatMessage)
+    hipchatSendPrivate(chatMessage)
 
     /*emailext (
             to: 'bitwiseman@bitwiseman.com',
