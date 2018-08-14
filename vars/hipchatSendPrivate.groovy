@@ -6,28 +6,32 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import groovy.json.*;
 
 def call(String message) {
-    emails=getEmail10lastCommiter()
+    emails = getEmail10lastCommiter()
     //emails=["michel.buczynski@tdsecurities.com"]
-    server=getServer()
-    token=getToken()
+    server = getServer()
+    token = getToken()
     def data = [
             message       : message,
             notify        : true,
             message_format: 'html'
     ]
     def json = JsonOutput.toJson(data)
-   for (email in emails) {
-   if ( sh ( returnStatus: true, script: """
+    for (email in emails) {
+        try {
+            if (sh(returnStatus: true, script: """
     curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
-    """ ==0) ) println ("hipchat: send to $email");
-       else  echo( "hipchat: NOT send to $email");
-   }
+    """ == 0)) println("hipchat: send to $email");
+            else echo("hipchat: NOT send to $email");
+        }
+    }
 }
+
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
             Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
     return hipChatDesc.getServer()
 }
+
 def getToken() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
             Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
@@ -40,6 +44,6 @@ def getToken() {
     }
 }
 
-def getEmail10lastCommiter(){
+def getEmail10lastCommiter() {
     return sh(returnStdout: true, script: "git log -10 --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
 }
