@@ -5,9 +5,8 @@ import com.cloudbees.plugins.credentials.*;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 def call(String messages) {
-    for (em in emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']])){
-        echo em
-    }
+    echo emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider']])){
+
 }
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
