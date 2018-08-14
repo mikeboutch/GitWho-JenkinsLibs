@@ -19,7 +19,7 @@ def call(String message) {
     def json = JsonOutput.toJson(data)
    for (email in emails) {
        sh """
-    curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://hipchat.dom.se/v2/user/$email/message -X POST -d '$json'
+    curl --ssl-no-revoke -H "Authorization: $token"  -H "Content-Type: application/json" https://$server/v2/user/$email/message -X POST -d '$json'
     """
    }
 
@@ -27,9 +27,7 @@ def call(String message) {
 def getServer() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
             Jenkins.getInstance().getDescriptorByType(HipChatNotifier.DescriptorImpl.class);
-    server=hipChatDesc.getServer()
-    echo server
-    return
+    return hipChatDesc.getServer()
 }
 def getToken() {
     HipChatNotifier.DescriptorImpl hipChatDesc =
