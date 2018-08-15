@@ -40,5 +40,9 @@ def latestSuffixOfBranch(prefixBranch){
         replaceFirst("origin/${prefixBranch}/","")
 }
 
+def getEmailLastCommiter(int i=10) {
+    return sh(returnStdout: true, script: "git log -$i --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
+}
+
 
 
