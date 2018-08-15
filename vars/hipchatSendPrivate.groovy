@@ -8,7 +8,7 @@ import groovy.json.*;
 def call(String message) {
     emails = gitUtils.getEmaillastCommiter()
     //emails=["michel.buczynski@tdsecurities.com"]
-    echo "email:${emails}"
+    echo "emails:${emails}"
     server = getServer()
     token = getToken()
     def data = [
