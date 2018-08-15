@@ -29,6 +29,7 @@ def commitsCountSinceBranch(sinceBranch) {
     try {
         return sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim()
     } catch() {
+        echo" Warnings: commitsCountSinceBranch return error"
         return "0"
     }
 }
