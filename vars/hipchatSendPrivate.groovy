@@ -6,7 +6,7 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import groovy.json.*;
 
 def call(String message) {
-    emails = gitUtils.getEmaillastCommiter()
+    emails = gitUtils.getEmailLastCommiter()
     //emails=["michel.buczynski@tdsecurities.com"]
     echo "emails:${emails}"
     server = getServer()
