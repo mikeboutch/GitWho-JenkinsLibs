@@ -26,7 +26,11 @@ def currentTags() {
 }
 
 def commitsCountSinceBranch(sinceBranch) {
-    return sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim()
+    try {
+        return sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim()
+    } catch() {
+        return "0"
+    }
 }
 
 def latestSuffixOfBranch(prefixBranch){
