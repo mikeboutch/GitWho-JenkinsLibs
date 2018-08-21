@@ -1,5 +1,4 @@
 #!groovy
-package gitUtils
 
 def currentBranchName(){
     return env.BRANCH_NAME

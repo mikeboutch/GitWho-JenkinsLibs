@@ -1,5 +1,4 @@
 #!groovy
-package verUtils
 import java.text.SimpleDateFormat
 
 def verYMX() {
