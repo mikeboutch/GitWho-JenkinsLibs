@@ -1,5 +1,5 @@
 #!groovy
-def call(args=""){
+def call(){
     return verUtils.verYMX()
 }
 
