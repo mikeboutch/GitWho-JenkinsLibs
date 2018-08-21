@@ -1,9 +1,6 @@
+#!groovy
+package verUtils
 import java.text.SimpleDateFormat
-
-def verUtils() {
-    return "varYMX"
-}
-
 
 def verYMX() {
     if (binding.hasVariable('version')) {

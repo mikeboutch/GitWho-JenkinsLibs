@@ -1,3 +1,6 @@
+#!groovy
+package gitUtils
+
 def gitUtils(){
     return "I am in git_utils"
 }
