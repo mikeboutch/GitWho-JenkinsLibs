@@ -1,5 +1,5 @@
 #!groovy
 def call(){
-    bat "rm \\temp\\%GIT_COMMIT%"
+    bat script="rm \\temp\\%GIT_COMMIT%" returnStatus=true
 }
 
