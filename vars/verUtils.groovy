@@ -37,7 +37,7 @@ def verYMX() {
             return
         }
     }
-    if (currentBranchName ==~ /^(?:develop|feature\/.*)$/) {
+    if (currentBranchName ==~ /^(?:develop|feature\/.*|bugfix\/.*)$/) {
         nowYYMMDD()
         def lv = this.latestVersion(gitUtils.lastedTags(), gitUtils.latestSuffixOfBranch("release"))
         if (lv[0]==YY && lv[1]==MM) {
@@ -52,6 +52,9 @@ def verYMX() {
         } else if (currentBranchName ==~ /feature\/.*/) {
             echo "we are in feature/"
             version += "-alpha"
+        } else if (currentBranchName ==~ /bugfix\/.*/) {
+            echo "we are in bugfix/"
+            version += "-bf"
         }
         version+=String.format("-%02d-%s", DD,gitUtils.currentCommitShortHash())
         env.JOB_VERSION = version
