@@ -54,7 +54,7 @@ def verYMX() {
             version += "-alpha"
         } else if (currentBranchName ==~ /bugfix\/.*/) {
             echo "we are in bugfix/"
-            version += "-bf"
+            version += "-bugfix"
         }
         version+=String.format("-%02d-%s", DD,gitUtils.currentCommitShortHash())
         env.JOB_VERSION = version
