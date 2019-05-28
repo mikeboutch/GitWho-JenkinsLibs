@@ -23,6 +23,7 @@ def currentTags() {
 
 def commitsCountSinceBranch(sinceBranch) {
     try {
+        sh ("git fetch origin ${sinceBranch}:${sinceBranch}")    
         return sh(returnStdout: true, script: "git rev-list --count  --first-parent ...${sinceBranch}").trim()
     } catch(Exception e) {
         echo" Warnings: commitsCountSinceBranch return error"
