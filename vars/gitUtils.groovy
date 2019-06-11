@@ -15,8 +15,8 @@ def listTags() {
     // git ls-remote --tags --sort=-v:refname origin| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/([^\^]+)(.*)/\1/g'| grep -E '^v?[0-9]+(\.[0-9]+)+$'
     return  sh(returnStdout: true, script:"""
         git ls-remote --tags --sort=-v:refname origin|
-        sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'| sed -E -n '/^[0-9]+(\\.[0-9]+)+\$/p'|
-        uniq
+        sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'| uniq|
+        sed -E -n '/^[0-9]+(\\.[0-9]+)+\$/p'
         """ ).split('\n')
     // not safe on dirty tags
     return  sh(returnStdout: true, script:"git ls-remote --tags --sort=-v:refname origin| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'|uniq").split('\n') 
