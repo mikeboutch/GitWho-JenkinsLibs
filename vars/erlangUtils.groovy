@@ -12,7 +12,7 @@ def restoreElixirDeps(){
 def buildMixApp(String elixirApp){
     bat "mix release --env=prod --verbose"
     bat "_build/prod/rel/${elixirApp}/bin/${elixirApp}.bat help"
-    bat "_build/prod/rel/${elixirApp}/bin/${elixirApp}.bat console"
+    bat "_build/prod/rel/${elixirApp}/bin/${elixirApp}.bat describe"
     bat "_build/prod/rel/${elixirApp}/bin/${elixirApp}.bat help"
 }
 
