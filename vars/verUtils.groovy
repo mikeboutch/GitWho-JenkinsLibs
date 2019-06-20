@@ -54,7 +54,7 @@ def latestVersionArray(a1, a2) {
 
 def nextVersion(){
     this.setYYMMDD()
-    def lv = this.latestVersionString2Array(gitUtils.latestSuffixOfBranch("release"),gitUtils.lastestTags())
+    def lv = this.latestVersionString2Array(gitUtils.latestSuffixOfBranch("release"),gitUtils.latestTags())
     if (lv[0]==YY && lv[1]==MM) {
         lv[2]+=1
         return "${lv.join('.')}"
@@ -64,7 +64,7 @@ def nextVersion(){
 }
 
 def verYMRH() {
-
+    gitUtils.gitWhoPreBuildCheck()
     if (binding.hasVariable('version')) {
         return version
     }
@@ -101,7 +101,7 @@ def verYMRH() {
             echo "we are in hotfix/"
             version += "-beta"
         } else if ((currentBranchName =~ /^bugfix\//).find()) {
-            
+            echo "we are in bugfix/"
             version += "-bf"
         } else if ((currentBranchName =~ /^develop/).find()) {
             echo "we are in develop"
