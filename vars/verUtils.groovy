@@ -16,47 +16,47 @@ def setYYMMDD() {
 }
 
 @NonCPS
-def splitVersion(v,n=3) {
-    def a=v.tokenize('.')*.toInteger()
-    def al=a.size()
-    if (al==0) al=1
-    if (al<n){
-         for (i in al..n)
-             a[i-1]=0
+def splitVersion(v, n = 3) {
+    def a = v.tokenize('.') *.toInteger()
+    def al = a.size()
+    if (al == 0) al = 1
+    if (al < n) {
+        for (i in al..n)
+            a[i - 1] = 0
     }
-    return a[0..n-1]
+    return a[0..n - 1]
 }
 
 def latestVersionArray(a1, a2) {
-    if (a1.size()==a2.size && a1.size>0)
-        for (i in 0..a1.size()-1) {
+    if (a1.size() == a2.size && a1.size > 0)
+        for (i in 0..a1.size() - 1) {
             if (a1[i] > a2[i]) {
                 return a1
             } else if (a1[i] > a2[i]) {
                 return a2
             }
-        }  
+        }
     return a1
 }
- def latestVersion(v1, v2, n=3) {
-    def a1 = this.splitVersion(v1,n)
-    def a2 = this.splitVersion(v2,n)
-    
-    return this.latestVersionArray(a1,a2).join('.')
- }
- def latestVersionString2Array(v1, v2, n=3){
-    def a1 = this.splitVersion(v1,n)
-    def a2 = this.splitVersion(v2,n)
-    
-    return this.latestVersionArray(a1,a2)
- }
+def latestVersion(v1, v2, n = 3) {
+    def a1 = this.splitVersion(v1, n)
+    def a2 = this.splitVersion(v2, n)
+
+    return this.latestVersionArray(a1, a2).join('.')
+}
+def latestVersionString2Array(v1, v2, n = 3){
+    def a1 = this.splitVersion(v1, n)
+    def a2 = this.splitVersion(v2, n)
+
+    return this.latestVersionArray(a1, a2)
+}
 
 
 def nextVersion(){
     this.setYYMMDD()
-    def lv = this.latestVersionString2Array(gitUtils.latestSuffixOfBranch("release"),gitUtils.latestTags())
-    if (lv[0]==YY && lv[1]==MM) {
-        lv[2]+=1
+    def lv = this.latestVersionString2Array(gitUtils.latestSuffixOfBranch("release"), gitUtils.latestTags())
+    if (lv[0] == YY && lv[1] == MM) {
+        lv[2] += 1
         return "${lv.join('.')}"
     } else {
         return "${YY}.${MM}.1"
@@ -69,12 +69,12 @@ def verYMRH() {
         return version
     }
     def currentBranchName = gitUtils.currentBranchName()
-    version=""
+    version = ""
     env.JOB_VERSION = ""
     if (currentBranchName == "master") {
         currentTags = gitUtils.currentTags()
         echo "we are in master $currentTags"
-        if (currentTags?.trim()) {
+        if (currentTags ?.trim()) {
             version = currentTags
             env.JOB_VERSION = version
             currentBuild.displayName = version
@@ -85,14 +85,14 @@ def verYMRH() {
             return
         }
     }
-    
-    if ((currentBranchName =~ /^(?:develop|feature\/|bugfix\/|release\/|hotfix\/)/).find()) {
-        if ((currentBranchName =~ /^(release|hotfix)\/.*/).find()) {
+
+    if (currentBranchName ==~ /^(?:develop|feature\/.*|bugfix\/.*|release\/.*|hotfix\/.*)$/) {
+        if (currentBranchName ==~ /^(release|hotfix)\/.*$/) {
             version = currentBranchName.replaceFirst(/^(release|hotfix)\//, "")
         } else if ((currentBranchName =~ /^bugfix\/.*/).find()) {
-            version=gitUtils.latestSuffixOfBranch("release")
-        }else {
-            version=this.nextVersion()
+            version = gitUtils.latestSuffixOfBranch("release")
+        } else {
+            version = this.nextVersion()
         }
         if ((currentBranchName =~ /^release\//).find()) {
             echo "we are in release/"
@@ -109,15 +109,15 @@ def verYMRH() {
         } else if ((currentBranchName =~ /^feature/).find()) {
             echo "we are in feature/"
             version += "-alpha"
-        } else{
-            error "Error not valid GitFlow branch name: $currentBranchName"
+        } else {
+            error "Error not valid GitFlow branch name: $currentBranchName 2"
         }
-        version+="-${env.BUILD_NUMBER}"
-        version+="-"+gitUtils.currentCommitShortHash()
+        version += "-${env.BUILD_NUMBER}"
+        version += "-" + gitUtils.currentCommitShortHash()
         env.JOB_VERSION = version
         currentBuild.displayName = version
         return version
-    } else { 
-        error "Error not valid GitFlow branch name: $currentBranchName"
+    } else {
+        error "Error not valid GitFlow branch name: $currentBranchName 1"
     }
 }
