@@ -1,0 +1,10 @@
+setVerYMRH()
+============
+## return :
+* version
+## modify :
+* version 
+* env.JOB_VERSION
+* currentBuild.displayName 
+
+## ...

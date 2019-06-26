@@ -31,15 +31,26 @@ def latestTags() {
 def currentTags() {
     return sh(returnStdout: true, script: "git ls-remote --tags origin |grep $env.GIT_COMMIT| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'").trim()
 }
+def fetchRemoteBranch(String branchName){
+    sh(label:"Fetch $branchName",
+        script:"git fetch --no-tags --progress origin +refs/heads/$branchName:refs/remotes/origin/$branchName")
+    try {
+        sh(label:"Add remote branch $branchName",
+            script:"git remote set-branches --add origin $branchName")
+    } catch (Exception e) {}
+}
 
 def commitsCountSinceBranch(String sinceBranch) {
+
+    fetchRemoteBranch(sinceBranch)
     try {
-        return sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim()
-        //sh ("git fetch origin ${sinceBranch}:${sinceBranch}") 
+        int commitCount=sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim().toInteger()
+        echo "$commitCount commits since $sinceBranch"
+        return commitCount
         //return sh(returnStdout: true, script: "git rev-list --count  --first-parent ...${sinceBranch}").trim()
     } catch (Exception e) {
         echo" Warnings: commitsCountSinceBranch return error"
-        return "0"
+        return -1
     }
 }
 def listSuffixOfBranch(String prefixBranch){
@@ -50,87 +61,150 @@ def listSuffixOfBranch(String prefixBranch){
 }
 
 def latestSuffixOfBranch(String prefixBranch){
-    return listSuffixOfBranch(prefixBranch)[0].trim()
+    try{
+        return listSuffixOfBranch(prefixBranch)[0].trim()
+    } catch(Exception e){
+        return ''
+    }
 }
 
 def getEmailLastCommitter(int i = 10) {
     return sh(returnStdout: true, script: "git log -$i --pretty=%ae|tr '[:upper:]' '[:lower:]'|sort|uniq").readLines()
 }
-String parentMergeBranchName(){
+
+String parentMergeBranchName(String toBranchName=''){
     String commitMessage = sh(returnStdout: true, script: 'git log --format=%B  -n 1');
     String branchName = ''
+    try {
     if ((commitMessage =~ /^Merge branch '/).find()) {
-        echo "find a merge"
-        branchName = (commitMessage =~ /^Merge branch '([^']*)/)[0][1]
+        if (toBranchName=='master' || toBranchName=='') {
+            branchName = (commitMessage =~ /^Merge branch '([^']*)/)[0][1]
+        } else {
+             branchName = (commitMessage =~ /^Merge branch '([^']*)' into ${toBranchName}/)[0][1]
+        }
     } else
         if ((commitMessage =~ /^Merge pull request #/).find()) {
-            echo "find a pull request"
-            branchName = (commitMessage =~ / from ([^ ]*)/)[0][1]
+            if (toBranchName=='')
+                branchName = (commitMessage =~ / from ([^ ]*)/)[0][1]
+            else
+            branchName = (commitMessage =~ / from ([^ ]*) to ${toBranchName}/)[0][1]
         }
+    } catch(Exception e){
+        branchName=''
+    }    
     echo "parentMergeBranchName=$branchName"
     return branchName
 }
+
 String parentMergeBranchHash(){
     return sh(returnStdout: true, script: "git log --pretty=%P -n 1 |awk '{print \$2}'").trim()
 }
+
 String branchHash(String branchName){
     return sh(returnStdout: true, script: "git ls-remote -q origin $branchName |awk '{print \$1}'").trim()
 }
 
-
 def deleteBranchNameHash(String branchName, String branchHash){
-    echo "verify:$branchName:$branchHash"
     String branchHashFromName = this.branchHash("$branchName")
-    echo "verify:$branchName:$branchHashFromName:$branchHash"
     if (branchHash != '' && branchHashFromName != '' &&
         branchHash == branchHashFromName) {
-        echo "branch $branchName will be deleted"
+        echo "Branch $branchName will be deleted"
         sh("git push origin :$branchName")
     }
 }
-
 
 def gitWhoPreBuildCheck(){
     if (binding.hasVariable('gitWhoPreBuildCheck')) {
         return gitWhoPreBuildCheck
     }
     String currentBranchName = currentBranchName()
-    String parentMergeBranchName = parentMergeBranchName()
+    String parentMergeBranchName = parentMergeBranchName(currentBranchName)
     echo "currentBranchName=$currentBranchName"
     if (currentBranchName == 'master') {
-        currentTags = currentTags()
-        echo "currentTags: $currentTags"
-        if (!currentTags) {
-            targetVersion = (parentMergeBranchName =~/^(?:release|hotfix)\/(.*)$/)[0][1]
-            echo "targetVersion=$targetVersion"
-            sh("git tag '$targetVersion'")
-            sh("git push origin $targetVersion")
-        }
         if ((parentMergeBranchName =~/^(?:release|hotfix)\/.*$/).find()) {
-            //echo "merged from $parentMergeBranchName[${parentMergeBranchHash()}] into master"
+            currentTags = currentTags()
+            echo "currentTags: $currentTags"
+            if (!currentTags) {
+                targetVersion = (parentMergeBranchName =~/^(?:release|hotfix)\/(.*)$/)[0][1]
+                echo "targetVersion=$targetVersion"
+                sh("git tag '$targetVersion'")
+                sh("git push origin $targetVersion")
+            }
             deleteBranchNameHash(parentMergeBranchName, parentMergeBranchHash())
-        } else {
-            error "only release/ and hotfix/ should be merged into master branch"
+        } else  {
+            error "Only release/ and hotfix/ branches can be merged and direct commit are prohibited into master branch."
         }
     } else if (currentBranchName == 'develop') {
         if (parentMergeBranchName ==~/^feature\/(.*)$/) {
-            //echo "merged from $parentMergeBranchName[${parentMergeBranchHash()}] into develop"
             deleteBranchNameHash(parentMergeBranchName, parentMergeBranchHash())
         }
     } else if (currentBranchName ==~ /^release\/.*$/){
         if (parentMergeBranchName ==~/^bugfix\/(.*)$/) {
-            //echo "merged from $parentMergeBranchName[${parentMergeBranchHash()}] into develop"
             deleteBranchNameHash(parentMergeBranchName, parentMergeBranchHash())
-        } else if (parentMergeBranchName ==~/^feature\/(.*)$/) {
-            error "merge feature/ into release/ branch are prohibited"
+        } else if (parentMergeBranchName ==~/^hotfix\/(.*)$/) {
+        } else if (parentMergeBranchName !=''){
+            error "Only bugfix/ and hotfix/ can be merged into a release/ branch"
+        } else {
+            echo "it's a direct commit"
         }
-    } else if (currentBranchName ==~ /^hotfix\/.*$/){
-        if (parentMergeBranchName){
-            error "any merge into hotfix/ branch are prohibited"
+    } else if (currentBranchName ==~ /^(?:hotfix|bugfix)\/.*$/){
+        if (parentMergeBranchName != ''){
+            error "Any merge into hotfix/ or bugfix/ branch are prohibited"
+        } else {
+            echo "It's a direct commit"
+        }
+    } else if (currentBranchName ==~ /^feature\/.*$/){
+        if (parentMergeBranchName ==~ /^(?:develop|feature\/.*|)$/){   
+        } else {
+            error "Only develop/ branches can be merged into a feature/ branch."
         }
     }
     gitWhoPreBuildCheck = true
 }
+def mergeCurrentInto(String targetBranchName){
+    String currentBranchName = currentBranchName()
 
+    sh(label:"Checkout $currentBranchName", 
+        script:"git checkout -b $currentBranchName -t origin/$currentBranchName || git checkout -b $currentBranchName || git checkout $currentBranchName")
+    fetchRemoteBranch(targetBranchName)
+    sh("git checkout  -t origin/$targetBranchName || (git pull origin $targetBranchName && git checkout $targetBranchName)")
+  
+    sh("git remote -v;git status;git branch -r;git branch -vv")
 
+    int mergeReturnStatus=sh(label: "Merge $currentBranchName into $targetBranchName", returnStatus: true, script:"git merge --no-edit --no-ff $currentBranchName")
+    echo "mergeReturnStatus:$mergeReturnStatus"
+    if (mergeReturnStatus==0){
+        sh("git push origin $targetBranchName") 
+    } else {
+        sh("git merge --abort")
+        echo "merge fail"
+    }      
+    sh("git checkout -f ${currentCommitHash()}")
+    sh("git branch -D $targetBranchName ")
+    sh("git branch -D $currentBranchName ") 
+    sh("git remote -v;git status;git branch -r;git branch -vv")          
+}
+def gitWhoPostBuildCheck(){
+    if (binding.hasVariable('gitWhoPostBuildCheck')) {
+        return gitWhoPostBuildCheck
+    }
+    String currentBranchName = currentBranchName()
+    if (currentBranchName ==~ /^release\/.*$/){
+        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
+            mergeCurrentInto('develop')
+        }
+    } else if (currentBranchName ==~ /^hotfix\/.*$/){
+        String targetBranchName=''
+        String targetVersion=latestSuffixOfBranch('release')
+        if (targetVersion!=''){
+            targetBranchName="release/$targetVersion"
+        } else {
+            targetBranchName='develop'
+        }
+        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
+            mergeCurrentInto(targetBranchName)
+        }
 
+    }
+    gitWhoPostBuildCheck = true
+}
