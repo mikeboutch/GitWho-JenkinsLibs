@@ -36,10 +36,12 @@ def call(String buildStatus = 'STARTED') {
 
     // Send notifications
     //slackSend (color: colorCode, message: summary)
-
-    hipchatSend (color: color, notify: notify, message: chatMessage)
-    if (notifyCommiter) hipchatSendPrivate(chatMessage)
-
+    // try {
+    //     hipchatSend (color: color, notify: notify, message: chatMessage)
+    //     if (notifyCommiter) hipchatSendPrivate(chatMessage)
+    // } catch(Exception e){
+    //     return ''
+    // }
     /*emailext (
             to: 'bitwiseman@bitwiseman.com',
             subject: subject,
