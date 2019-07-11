@@ -121,18 +121,22 @@ def gitWhoPreBuildCheck(){
     String parentMergeBranchName = parentMergeBranchName(currentBranchName)
     echo "currentBranchName=$currentBranchName"
     if (currentBranchName == 'master') {
-        if ((parentMergeBranchName =~/^(?:release|hotfix)\/.*$/).find()) {
+        if ((parentMergeBranchName =~/^(?:(?:release|hotfix)\/.*|develop)$/).find()) {
             currentTags = currentTags()
             echo "currentTags: $currentTags"
             if (!currentTags) {
-                targetVersion = (parentMergeBranchName =~/^(?:release|hotfix)\/(.*)$/)[0][1]
-                echo "targetVersion=$targetVersion"
-                sh("git tag '$targetVersion'")
-                sh("git push origin $targetVersion")
+                if (!(parentMergeBranchName =~/^develop$/)) {
+                    targetVersion = (parentMergeBranchName =~/^(?:release|hotfix)\/(.*)$/)[0][1]
+                    echo "targetVersion=$targetVersion"
+                    sh("git tag '$targetVersion'")
+                    sh("git push origin $targetVersion")
+                }
+                //TODO: if merged from develop
             }
-            deleteBranchNameHash(parentMergeBranchName, parentMergeBranchHash())
+            if (!(parentMergeBranchName =~/^develop$/))
+                deleteBranchNameHash(parentMergeBranchName, parentMergeBranchHash())
         } else  {
-            error "Only release/ and hotfix/ branches can be merged and direct commit are prohibited into master branch."
+            error "Only release/, hotfix/ and dvelop branches can be merged and direct commit are prohibited into master branch."
         }
     } else if (currentBranchName == 'develop') {
         if (parentMergeBranchName ==~/^feature\/(.*)$/) {
@@ -147,6 +151,7 @@ def gitWhoPreBuildCheck(){
         } else {
             echo "it's a direct commit"
         }
+        //TODO: make a allow merge from bugfix to hotfix....
     } else if (currentBranchName ==~ /^(?:hotfix|bugfix)\/.*$/){
         if (parentMergeBranchName != ''){
             error "Any merge into hotfix/ or bugfix/ branch are prohibited"
@@ -161,13 +166,21 @@ def gitWhoPreBuildCheck(){
     }
     gitWhoPreBuildCheck = true
 }
-def mergeCurrentInto(String targetBranchName){
+def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
     String currentBranchName = currentBranchName()
-
-    sh(label:"Checkout $currentBranchName", 
+    if (isAtags == false) {
+        sh(label:"Checkout $currentBranchName", 
         script:"git checkout -b $currentBranchName -t origin/$currentBranchName || git checkout -b $currentBranchName || git checkout $currentBranchName")
-    fetchRemoteBranch(targetBranchName)
-    sh("git checkout  -t origin/$targetBranchName || (git pull origin $targetBranchName && git checkout $targetBranchName)")
+        fetchRemoteBranch(targetBranchName)
+    } else {
+
+        currentBranchName = currentTags()
+        sh(label:"Checkout $currentBranchName", 
+        script:"git fetch -t")
+    }
+    
+    sh(label:"Checkout $targetBranchName", 
+        script:"git checkout  -t origin/$targetBranchName || (git pull origin $targetBranchName && git checkout $targetBranchName)")
   
     sh("git remote -v;git status;git branch -r;git branch -vv")
 
@@ -180,19 +193,22 @@ def mergeCurrentInto(String targetBranchName){
         echo "merge fail"
     }      
     sh("git checkout -f ${currentCommitHash()}")
-    sh("git branch -D $targetBranchName ")
-    sh("git branch -D $currentBranchName ") 
+    sh(returnStatus: true, script:"git branch -D $targetBranchName ")
+    sh(returnStatus: true, script:"git branch -D $currentBranchName ") 
     sh("git remote -v;git status;git branch -r;git branch -vv")          
 }
+
 def gitWhoPostBuildCheck(){
     if (binding.hasVariable('gitWhoPostBuildCheck')) {
         return gitWhoPostBuildCheck
     }
     String currentBranchName = currentBranchName()
+    //TODO:add disable releas amb = ambre
     if (currentBranchName ==~ /^release\/.*$/){
         if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
             mergeCurrentInto('develop')
         }
+    //TODO:add disable hotfix amb = ambhf
     } else if (currentBranchName ==~ /^hotfix\/.*$/){
         String targetBranchName=''
         String targetVersion=latestSuffixOfBranch('release')
@@ -204,7 +220,11 @@ def gitWhoPostBuildCheck(){
         if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
             mergeCurrentInto(targetBranchName)
         }
-
+    } else if (currentBranchName ==~ /^master$/){
+        //TODO: the merge should be from the TAG and not master
+        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
+            mergeCurrentInto('develop',true)
+        }
     }
     gitWhoPostBuildCheck = true
 }
