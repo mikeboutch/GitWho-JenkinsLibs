@@ -21,7 +21,7 @@ def call(String buildStatus = 'STARTED', String warningMessages='') {
     // <p>Check console output at &QUOT;<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
     def msTeamMessage= """${env.JOB_NAME} - #${env.BUILD_NUMBER} - <a href="${env.BUILD_URL}">${currentBuild.displayName}</a> - ${currentBuild.durationString}"""
     if (warningMessages!=''){
-        msTeamMessage="""<h2>$warningMessages</h2>"""+msTeamMessage
+        msTeamMessage="""<h2>$warningMessage</h2>"""+msTeamMessage
     }
 
     // Override default values based on build status
@@ -42,7 +42,7 @@ def call(String buildStatus = 'STARTED', String warningMessages='') {
         colorCode = 'FF0000'
         //notify=true
         //notifyCommiter=true
-    } else { //normally a warnings
+    } else { //normally a warning
         color = 'ORANGE'
         colorCode = 'FF4500'
         //notify=true
