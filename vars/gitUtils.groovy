@@ -203,25 +203,33 @@ def gitWhoPostBuildCheck(){
         return gitWhoPostBuildCheck
     }
     String currentBranchName = currentBranchName()
-    //TODO:add disable releas amb = ambre
+    //echo "GITWHO_DISABLE_AMB_REL:${env['GITWHO_DISABLE_AMB_REL']}"
+    //echo "GITWHO_DISABLE_AMB_HF:${env['GITWHO_DISABLE_AMB_HF']}"
     if (currentBranchName ==~ /^release\/.*$/){
-        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
-            mergeCurrentInto('develop')
-        }
-    //TODO:add disable hotfix amb = ambhf
-    } else if (currentBranchName ==~ /^hotfix\/.*$/){
-        String targetBranchName=''
-        String targetVersion=latestSuffixOfBranch('release')
-        if (targetVersion!=''){
-            targetBranchName="release/$targetVersion"
+
+        if (env['GITWHO_DISABLE_AMB_REL'] != null){
+            echo "Auto Merge Back disabled for release/"
         } else {
-            targetBranchName='develop'
+            if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
+                mergeCurrentInto('develop')
+            }
         }
-        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
-            mergeCurrentInto(targetBranchName)
+    } else if (currentBranchName ==~ /^hotfix\/.*$/){
+        if ("${env['GITWHO_DISABLE_AMB_HF']}" !=""){
+            echo "Auto Merge Back disabled for hotfix/"
+        } else {
+            String targetBranchName=''
+            String targetVersion=latestSuffixOfBranch('release')
+            if (targetVersion!=''){
+                targetBranchName="release/$targetVersion"
+            } else {
+                targetBranchName='develop'
+            }
+            if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
+                mergeCurrentInto(targetBranchName)
+            }
         }
     } else if (currentBranchName ==~ /^master$/){
-        //TODO: the merge should be from the TAG and not master
         if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
             mergeCurrentInto('develop',true)
         }
