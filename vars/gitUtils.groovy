@@ -170,7 +170,7 @@ def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
     String currentBranchName = currentBranchName()
     if (isAtags == false) {
         sh(label:"Checkout $currentBranchName", 
-        script:"git checkout -b $currentBranchName -t origin/$currentBranchName || git checkout -b $currentBranchName || git checkout $currentBranchName")
+        script:"git checkout -b $currentBranchName -t origin/$currentBranchName --force || git checkout -b $currentBranchName --force || git checkout $currentBranchName --force")
         fetchRemoteBranch(targetBranchName)
     } else {
 
@@ -180,7 +180,7 @@ def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
     }
     
     sh(label:"Checkout $targetBranchName", 
-        script:"git checkout  -t origin/$targetBranchName || (git pull origin $targetBranchName && git checkout $targetBranchName)")
+        script:"git checkout  -t origin/$targetBranchName --force || (git pull origin $targetBranchName && git checkout $targetBranchName --force)")
   
     sh("git remote -v;git status;git branch -r;git branch -vv")
 
@@ -192,7 +192,7 @@ def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
         sh("git merge --abort")
         echo "merge fail"
     }      
-    sh("git checkout -f ${currentCommitHash()}")
+    sh("git checkout -f ${currentCommitHash()} --force")
     sh(returnStatus: true, script:"git branch -D $targetBranchName ")
     sh(returnStatus: true, script:"git branch -D $currentBranchName ") 
     sh("git remote -v;git status;git branch -r;git branch -vv")          
