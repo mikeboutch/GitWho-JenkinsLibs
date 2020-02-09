@@ -203,8 +203,8 @@ def gitWhoPostBuildCheck(){
         return gitWhoPostBuildCheck
     }
     String currentBranchName = currentBranchName()
-    //echo "GITWHO_DISABLE_AMB_REL:${env['GITWHO_DISABLE_AMB_REL']}"
-    //echo "GITWHO_DISABLE_AMB_HF:${env['GITWHO_DISABLE_AMB_HF']}"
+    echo "GITWHO_DISABLE_AMB_REL:${env['GITWHO_DISABLE_AMB_REL']}"
+    echo "GITWHO_DISABLE_AMB_HF:${env['GITWHO_DISABLE_AMB_HF']}"
     if (currentBranchName ==~ /^release\/.*$/){
 
         if (env['GITWHO_DISABLE_AMB_REL'] != null){
@@ -215,7 +215,7 @@ def gitWhoPostBuildCheck(){
             }
         }
     } else if (currentBranchName ==~ /^hotfix\/.*$/){
-        if ("${env['GITWHO_DISABLE_AMB_HF']}" !=""){
+        if (env.GITWHO_DISABLE_AMB_HF != null){
             echo "Auto Merge Back disabled for hotfix/"
         } else {
             String targetBranchName=''
