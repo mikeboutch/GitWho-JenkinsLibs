@@ -34,7 +34,7 @@ def currentTags() {
         ).trim()
 }
 def fetchRemoteBranch(String branchName){
-    sh(label:"Fetch $branchName",
+    sh(label:"Fetching $branchName branch",
         script:"git fetch --no-tags --progress origin +refs/heads/$branchName:refs/remotes/origin/$branchName")
     try {
         sh(label:"Add remote for $branchName branch",
@@ -113,7 +113,6 @@ def deleteBranchNameHash(String branchName, String branchHash){
     String branchHashFromName = this.branchHash("$branchName")
     if (branchHash != '' && branchHashFromName != '' &&
         branchHash == branchHashFromName) {
-        echo 
         sh(label:"Branch $branchName will be deleted",script:"git push origin :$branchName")
     }
 }
@@ -122,9 +121,10 @@ def gitWhoPreBuildCheck(){
     if (binding.hasVariable('gitWhoPreBuildCheck')) {
         return gitWhoPreBuildCheck
     }
+    echo "Starting gitWhoPreBuildCheck()"
     String currentBranchName = currentBranchName()
     String parentMergeBranchName = parentMergeBranchName(currentBranchName)
-    echo "currentBranchName=$currentBranchName"
+    echo "currentBranchName=$currentBranchName, parentMergeBranchName=$parentMergeBranchName"
     if (currentBranchName == 'master') {
         if ((parentMergeBranchName =~/^(?:(?:release|hotfix)\/.*|develop)$/).find()) {
             currentTags = currentTags()
@@ -170,6 +170,7 @@ def gitWhoPreBuildCheck(){
         }
     }
     gitWhoPreBuildCheck = true
+    echo "gitWhoPreBuildCheck() finished"
 }
 def gitStatus(){
     sh(label:"Git status", script:"""
@@ -204,12 +205,11 @@ def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
                 error "WARNING: the merge failed, probably a merge conflict!"
             }
         }      
-        sh(label: "Checkout current", 
-            script:"git checkout -f ${currentCommitHash()} --force")
-        sh(label:"Clean up branches", returnStatus: true, script:"""
-            git branch -D $targetBranchName 
-            git branch -D $currentBranchName
-            """)
+        sh(label: "Checkout current & Clean up branches", returnStatus: true, script:"""
+            git checkout -f ${currentCommitHash()} --force && (
+                git branch -D $targetBranchName 
+                git branch -D $currentBranchName
+            )""")
         gitStatus()
     } else {
         echo "Already merged or not a new commit"
