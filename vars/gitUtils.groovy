@@ -15,7 +15,7 @@ def currentCommitShortHash(){
 def listTags() {
 
     // git ls-remote --tags --sort=-v:refname origin| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/([^\^]+)(.*)/\1/g'| grep -E '^v?[0-9]+(\.[0-9]+)+$'
-    return sh(label:"List Tags",returnStdout: true, script: """
+    return sh(label:"List all Tags",returnStdout: true, script: """
         git ls-remote --tags --sort=-v:refname origin |
         sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g' | uniq |
         sed -E -n '/^[0-9]+(\\.[0-9]+)+\$/p'
@@ -29,7 +29,7 @@ def latestTags() {
 }
 
 def currentTags() {
-    return sh(label:"Current Tags", returnStdout: true,
+    return sh(label:"Get the current Tags", returnStdout: true,
         script: "git ls-remote --tags origin |grep $env.GIT_COMMIT| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'"
         ).trim()
 }
@@ -37,7 +37,7 @@ def fetchRemoteBranch(String branchName){
     sh(label:"Fetch $branchName",
         script:"git fetch --no-tags --progress origin +refs/heads/$branchName:refs/remotes/origin/$branchName")
     try {
-        sh(label:"Add remote branch $branchName",
+        sh(label:"Add remote for $branchName branch",
             script:"git remote set-branches --add origin $branchName")
     } catch (Exception e) {}
 }
@@ -77,7 +77,8 @@ def getEmailLastCommitter(int i = 10) {
 }
 
 String parentMergeBranchName(String toBranchName=''){
-    String commitMessage = sh(returnStdout: true, script: 'git log --format=%B  -n 1');
+    echo "Getting the current merge parent branch name:"
+    String commitMessage = sh(label:"Get the current commit message",returnStdout: true, script: 'git log --format=%B  -n 1');
     String branchName = ''
     try {
     if ((commitMessage =~ /^Merge branch '/).find()) {
@@ -101,11 +102,11 @@ String parentMergeBranchName(String toBranchName=''){
 }
 
 String parentMergeBranchHash(){
-    return sh(label:"Parent merge hash", returnStdout: true, script: "git log --pretty=%P -n 1 |awk '{print \$2}'").trim()
+    return sh(label:"Get the current merge parent hash", returnStdout: true, script: "git log --pretty=%P -n 1 |awk '{print \$2}'").trim()
 }
 
 String branchHash(String branchName){
-    return sh(label:"$branchName branch hash",returnStdout: true, script: "git ls-remote -q origin $branchName |awk '{print \$1}'").trim()
+    return sh(label:"Get $branchName branch hash",returnStdout: true, script: "git ls-remote -q origin $branchName |awk '{print \$1}'").trim()
 }
 
 def deleteBranchNameHash(String branchName, String branchHash){
@@ -171,7 +172,12 @@ def gitWhoPreBuildCheck(){
     gitWhoPreBuildCheck = true
 }
 def gitStatus(){
-    sh(label:"Git status", script:"git remote -v;git status;git branch -r;git branch -vv")
+    sh(label:"Git status", script:"""
+        git remote -v
+        git status
+        git branch -r
+        git branch -vv
+        """)
 }
 def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
     String currentBranchName = currentBranchName()
@@ -189,13 +195,14 @@ def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
             script:"git checkout  -t origin/$targetBranchName --force || (git pull origin $targetBranchName && git checkout $targetBranchName --force)")
         gitStatus()
         
-        int mergeReturnStatus=sh(label: "Merge $currentBranchName into $targetBranchName", returnStatus: true, script:"git merge --no-edit --no-ff $currentBranchName")
-        echo "mergeReturnStatus:$mergeReturnStatus"
-        if (mergeReturnStatus==0){
+        try {
+            sh(label:"Merge $currentBranchName into $targetBranchName", script:"git merge --no-edit --no-ff $currentBranchName")
             sh(label:"Pushing the merge", script:"git push origin $targetBranchName") 
-        } else {
-            sh(label:"Aborting the merge",script:"git merge --abort")
-            echo "Warning: the merge failed, probably a merge conflict!"
+        } catch(all) {
+            sh(label:"Aborting the merge, a possible merge conflict!",script:"git merge --abort")
+            catchError(buildResult: currentBuild.result, stageResult: 'UNSTABLE') {
+                error "WARNING: the merge failed, probably a merge conflict!"
+            }
         }      
         sh(label: "Checkout current", 
             script:"git checkout -f ${currentCommitHash()} --force")
@@ -219,13 +226,17 @@ def gitWhoPostBuildCheck(){
     if (currentBranchName ==~ /^release\/.*$/){
 
         if (env['GITWHO_DISABLE_AMB_REL'] != null){
-            echo "Auto Merge Back disabled for release/"
+            catchError(buildResult: currentBuild.result, stageResult: 'UNSTABLE') {
+                error "Auto Merge Back disabled for release/"
+            }
         } else {
             mergeCurrentInto('develop')
         }
     } else if (currentBranchName ==~ /^hotfix\/.*$/){
-        if (env.GITWHO_DISABLE_AMB_HF != null){
-            echo "Auto Merge Back disabled for hotfix/"
+        if (env.GITWHO_DISABLE_AMB_HF != null){ 
+            catchError(buildResult: currentBuild.result, stageResult: 'UNSTABLE') {
+                error "Auto Merge Back disabled for hotfix/"
+            }
         } else {
             String targetBranchName=''
             String targetVersion=latestSuffixOfBranch('release')
