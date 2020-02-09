@@ -15,7 +15,7 @@ def currentCommitShortHash(){
 def listTags() {
 
     // git ls-remote --tags --sort=-v:refname origin| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/([^\^]+)(.*)/\1/g'| grep -E '^v?[0-9]+(\.[0-9]+)+$'
-    return sh(returnStdout: true, script: """
+    return sh(label:"List Tags",returnStdout: true, script: """
         git ls-remote --tags --sort=-v:refname origin |
         sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g' | uniq |
         sed -E -n '/^[0-9]+(\\.[0-9]+)+\$/p'
@@ -29,7 +29,9 @@ def latestTags() {
 }
 
 def currentTags() {
-    return sh(returnStdout: true, script: "git ls-remote --tags origin |grep $env.GIT_COMMIT| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'").trim()
+    return sh(label:"Current Tags", returnStdout: true,
+        script: "git ls-remote --tags origin |grep $env.GIT_COMMIT| sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\\/tags\\/([^\\^]+)(.*)/\\1/g'"
+        ).trim()
 }
 def fetchRemoteBranch(String branchName){
     sh(label:"Fetch $branchName",
@@ -44,12 +46,12 @@ def commitsCountSinceBranch(String sinceBranch) {
 
     fetchRemoteBranch(sinceBranch)
     try {
-        int commitCount=sh(returnStdout: true, script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim().toInteger()
-        echo "$commitCount commits since $sinceBranch"
-        return commitCount
+        return sh(label:"Counting commit since $sinceBranch",returnStdout: true, 
+            script: "git rev-list --no-merges --count HEAD ^origin/${sinceBranch}").trim().toInteger()
+        //echo "$commitCount commits since $sinceBranch"
         //return sh(returnStdout: true, script: "git rev-list --count  --first-parent ...${sinceBranch}").trim()
     } catch (Exception e) {
-        echo" Warnings: commitsCountSinceBranch return error"
+        echo "Warnings: commitsCountSinceBranch return error!"
         return -1
     }
 }
@@ -57,7 +59,9 @@ def listSuffixOfBranch(String prefixBranch){
     prefixBranch = prefixBranch.replaceFirst(/\/$/, "")
     //echo prefixBranch
     //return sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranch}/*\" --sort=-v:refname |head -1").trim().
-    return sh(returnStdout: true, script: "git ls-remote --sort=-v:refname origin '$prefixBranch/*'|sed -E 's/^.*$prefixBranch\\/(.*)\$/\\1/g'|uniq").split('\n')
+    return sh(label:"List suffix of $prefixBranch branches",returnStdout: true, 
+        script: "git ls-remote --sort=-v:refname origin '$prefixBranch/*'|sed -E 's/^.*$prefixBranch\\/(.*)\$/\\1/g'|uniq"
+        ).split('\n')
 }
 
 def latestSuffixOfBranch(String prefixBranch){
@@ -97,19 +101,19 @@ String parentMergeBranchName(String toBranchName=''){
 }
 
 String parentMergeBranchHash(){
-    return sh(returnStdout: true, script: "git log --pretty=%P -n 1 |awk '{print \$2}'").trim()
+    return sh(label:"Parent merge hash", returnStdout: true, script: "git log --pretty=%P -n 1 |awk '{print \$2}'").trim()
 }
 
 String branchHash(String branchName){
-    return sh(returnStdout: true, script: "git ls-remote -q origin $branchName |awk '{print \$1}'").trim()
+    return sh(label:"$branchName branch hash",returnStdout: true, script: "git ls-remote -q origin $branchName |awk '{print \$1}'").trim()
 }
 
 def deleteBranchNameHash(String branchName, String branchHash){
     String branchHashFromName = this.branchHash("$branchName")
     if (branchHash != '' && branchHashFromName != '' &&
         branchHash == branchHashFromName) {
-        echo "Branch $branchName will be deleted"
-        sh("git push origin :$branchName")
+        echo 
+        sh(label:"Branch $branchName will be deleted",script:"git push origin :$branchName")
     }
 }
 
@@ -166,53 +170,58 @@ def gitWhoPreBuildCheck(){
     }
     gitWhoPreBuildCheck = true
 }
+def gitStatus(){
+    sh(label:"Git status", script:"git remote -v;git status;git branch -r;git branch -vv")
+}
 def mergeCurrentInto(String targetBranchName, boolean isAtags= false){
     String currentBranchName = currentBranchName()
-    if (isAtags == false) {
-        sh(label:"Checkout $currentBranchName", 
-        script:"git checkout -b $currentBranchName -t origin/$currentBranchName --force || git checkout -b $currentBranchName --force || git checkout $currentBranchName --force")
+    if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
+        if (isAtags == false) {
+            sh(label:"Checkout $currentBranchName current branch", 
+                script:"git checkout -b $currentBranchName -t origin/$currentBranchName --force || git checkout -b $currentBranchName --force || git checkout $currentBranchName --force")
+        } else {
+            currentBranchName = currentTags()
+            sh(label:"Checkout $currentBranchName current tags", 
+                script:"git fetch -t")
+        }
         fetchRemoteBranch(targetBranchName)
+        sh(label:"Checkout $targetBranchName target branch", 
+            script:"git checkout  -t origin/$targetBranchName --force || (git pull origin $targetBranchName && git checkout $targetBranchName --force)")
+        gitStatus()
+        
+        int mergeReturnStatus=sh(label: "Merge $currentBranchName into $targetBranchName", returnStatus: true, script:"git merge --no-edit --no-ff $currentBranchName")
+        echo "mergeReturnStatus:$mergeReturnStatus"
+        if (mergeReturnStatus==0){
+            sh(label:"Pushing the merge", script:"git push origin $targetBranchName") 
+        } else {
+            sh(label:"Aborting the merge",script:"git merge --abort")
+            echo "Warning: the merge failed, probably a merge conflict!"
+        }      
+        sh(label: "Checkout current", 
+            script:"git checkout -f ${currentCommitHash()} --force")
+        sh(label:"Clean up branches", returnStatus: true, script:"""
+            git branch -D $targetBranchName 
+            git branch -D $currentBranchName
+            """)
+        gitStatus()
     } else {
-
-        currentBranchName = currentTags()
-        sh(label:"Checkout $currentBranchName", 
-        script:"git fetch -t")
-    }
-    
-    sh(label:"Checkout $targetBranchName", 
-        script:"git checkout  -t origin/$targetBranchName --force || (git pull origin $targetBranchName && git checkout $targetBranchName --force)")
-  
-    sh("git remote -v;git status;git branch -r;git branch -vv")
-
-    int mergeReturnStatus=sh(label: "Merge $currentBranchName into $targetBranchName", returnStatus: true, script:"git merge --no-edit --no-ff $currentBranchName")
-    echo "mergeReturnStatus:$mergeReturnStatus"
-    if (mergeReturnStatus==0){
-        sh("git push origin $targetBranchName") 
-    } else {
-        sh("git merge --abort")
-        echo "merge fail"
-    }      
-    sh("git checkout -f ${currentCommitHash()} --force")
-    sh(returnStatus: true, script:"git branch -D $targetBranchName ")
-    sh(returnStatus: true, script:"git branch -D $currentBranchName ") 
-    sh("git remote -v;git status;git branch -r;git branch -vv")          
+        echo "Already merged or not a new commit"
+    }          
 }
 
 def gitWhoPostBuildCheck(){
     if (binding.hasVariable('gitWhoPostBuildCheck')) {
         return gitWhoPostBuildCheck
     }
+    echo "Starting gitWhoPostBuildCheck()"
     String currentBranchName = currentBranchName()
-    echo "GITWHO_DISABLE_AMB_REL:${env['GITWHO_DISABLE_AMB_REL']}"
-    echo "GITWHO_DISABLE_AMB_HF:${env['GITWHO_DISABLE_AMB_HF']}"
+    //echo "GITWHO_DISABLE_AMB_REL:${env['GITWHO_DISABLE_AMB_REL']},GITWHO_DISABLE_AMB_HF:${env['GITWHO_DISABLE_AMB_HF']}"
     if (currentBranchName ==~ /^release\/.*$/){
 
         if (env['GITWHO_DISABLE_AMB_REL'] != null){
             echo "Auto Merge Back disabled for release/"
         } else {
-            if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
-                mergeCurrentInto('develop')
-            }
+            mergeCurrentInto('develop')
         }
     } else if (currentBranchName ==~ /^hotfix\/.*$/){
         if (env.GITWHO_DISABLE_AMB_HF != null){
@@ -225,14 +234,11 @@ def gitWhoPostBuildCheck(){
             } else {
                 targetBranchName='develop'
             }
-            if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch(targetBranchName)>0){
-                mergeCurrentInto(targetBranchName)
-            }
+            mergeCurrentInto(targetBranchName)
         }
     } else if (currentBranchName ==~ /^master$/){
-        if (branchHash(currentBranchName)==currentCommitHash() && commitsCountSinceBranch('develop')>0){
-            mergeCurrentInto('develop',true)
-        }
+        mergeCurrentInto('develop',true)
     }
     gitWhoPostBuildCheck = true
+    echo "gitWhoPostBuildCheck() finished"
 }
