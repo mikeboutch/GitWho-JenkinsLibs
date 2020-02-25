@@ -60,7 +60,7 @@ def listSuffixOfBranch(String prefixBranch){
     //echo prefixBranch
     //return sh(returnStdout: true, script: "git branch -r --list \"origin/${prefixBranch}/*\" --sort=-v:refname |head -1").trim().
     return sh(label:"List suffix of $prefixBranch branches",returnStdout: true, 
-        script: "git ls-remote --sort=-v:refname origin '$prefixBranch/*'|sed -E 's/^.*$prefixBranch\\/(.*)\$/\\1/g'|uniq"
+        script: "git ls-remote --sort=-v:refname origin '$prefixBranch/*'|grep -v /abandon/|sed -E 's/^.*$prefixBranch\\/(.*)\$/\\1/g'|uniq"
         ).split('\n')
 }
 
