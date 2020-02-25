@@ -99,7 +99,7 @@ def verYMRH() {
             version += "-rc"
         } else if ((currentBranchName =~ /^hotfix\//).find()) {
             echo "we are in hotfix/"
-            version += "-beta"
+            version += "-hf"
         } else if ((currentBranchName =~ /^bugfix\//).find()) {
             echo "we are in bugfix/"
             version += "-bf"
