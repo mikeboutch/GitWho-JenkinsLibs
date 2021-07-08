@@ -6,10 +6,9 @@ pipeline {
     environment {
         //GITWHO_DISABLE_AMB_HF = "1" //Auto Merge Back disabled for hotfix/
         //GITWHO_DISABLE_AMB_REL = "1" //Auto Merge Back disabled for release/
- 
- 
-                // Please try to avoid call of function like "JOB_VERSION = setVerYMX()"
-               // Because if error happen, is difficult see it in Jenkins UI, since environment is not a step...
+        
+        // Please try to avoid call of function like "JOB_VERSION = setVerYMX()"
+        // Because if error happen, is difficult see it in Jenkins UI, since environment is not a step...
                
     } 
     agent any
